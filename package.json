@@ -1,14 +1,13 @@
 {
-  "name": "firevenus.github.io",
-  "version": "1.0.0",
+  "name": "enki-pages",
   "type": "module",
-  "description": "奥尔特云 - 游戏开发、技术笔记与产业观察",
+  "version": "1.0.0",
   "scripts": {
-    "docs:dev": "vitepress dev",
-    "docs:build": "vitepress build",
-    "docs:preview": "vitepress preview"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
   },
-  "devDependencies": {
-    "vitepress": "^1.6.3"
+  "dependencies": {
+    "astro": "^5.0.0"
   }
 }

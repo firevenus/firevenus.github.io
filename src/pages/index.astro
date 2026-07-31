@@ -1,0 +1,165 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const posts = await getCollection('blog');
+posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout title="奥尔特云">
+  <header class="hero">
+    <h1 class="hero-name">奥尔特云</h1>
+    <p class="hero-text">游戏开发 · 技术笔记 · 产业观察</p>
+    <p class="hero-tagline">冻土回声 · Enki Yan</p>
+    <div class="hero-actions">
+      <a href="/blog/mcp-wechat-publish" class="btn-primary">阅读最新文章</a>
+      <a href="https://github.com/firevenus" class="btn-secondary">GitHub</a>
+    </div>
+  </header>
+
+  <section class="features">
+    <div class="feature-card">
+      <h3>AI × 微信公众号</h3>
+      <p>14个 MCP Server 全景对比，实测选型，从踩坑到封装 Skill 的完整复盘。</p>
+    </div>
+    <div class="feature-card">
+      <h3>冻土之上系列</h3>
+      <p>东北游戏产业深度分析，逆向选址，从宏观到微观的产业观察。</p>
+    </div>
+  </section>
+
+  <section class="post-list">
+    <h2>全部文章</h2>
+    {posts.map((post) => (
+      <a href={`/blog/${post.slug}`} class="post-card">
+        <h3>{post.data.title}</h3>
+        <time datetime={post.data.date.toISOString()}>
+          {post.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+        </time>
+        {post.data.description && <p>{post.data.description}</p>}
+      </a>
+    ))}
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    text-align: center;
+    padding: 100px 24px 60px;
+  }
+  .hero-name {
+    font-size: 3em;
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .hero-text {
+    font-size: 1.3em;
+    color: #444;
+    margin-bottom: 4px;
+  }
+  .hero-tagline {
+    font-size: 1em;
+    color: #888;
+    margin-bottom: 32px;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn-primary, .btn-secondary {
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s;
+    border: none;
+  }
+  .btn-primary {
+    background: #2563eb;
+    color: #fff;
+  }
+  .btn-primary:hover {
+    background: #1d4ed8;
+  }
+  .btn-secondary {
+    background: #f1f5f9;
+    color: #333;
+  }
+  .btn-secondary:hover {
+    background: #e2e8f0;
+  }
+
+  .features {
+    max-width: 720px;
+    margin: 0 auto 60px;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .feature-card {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .feature-card h3 {
+    font-size: 1.1em;
+    margin-bottom: 8px;
+    color: #111;
+  }
+  .feature-card p {
+    color: #666;
+    font-size: 0.92em;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .post-list {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+  .post-list h2 {
+    font-size: 1.3em;
+    margin-bottom: 20px;
+    border: none;
+    padding: 0;
+  }
+  .post-card {
+    display: block;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+    text-decoration: none;
+    color: inherit;
+  }
+  .post-card:hover h3 { color: #2563eb; }
+  .post-card h3 {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 4px;
+  }
+  .post-card time {
+    color: #999;
+    font-size: 0.85em;
+  }
+  .post-card p {
+    color: #666;
+    font-size: 0.9em;
+    margin-top: 6px;
+  }
+
+  @media (max-width: 640px) {
+    .hero { padding: 60px 16px 40px; }
+    .hero-name { font-size: 2.2em; }
+    .hero-text { font-size: 1.1em; }
+    .features { grid-template-columns: 1fr; }
+  }
+</style>
