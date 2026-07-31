@@ -4,7 +4,7 @@ export default defineConfig({
   lang: 'zh-CN',
   title: '奥尔特云',
   description: '游戏开发、技术笔记与产业观察',
-  cleanUrls: true,
+  cleanUrls: false,
   lastUpdated: true,
 
   sitemap: {
