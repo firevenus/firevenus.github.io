@@ -1,5 +1,12 @@
 ---
 import '../styles/global.css';
+
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -7,8 +14,8 @@ import '../styles/global.css';
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>微信公众号 MCP 全景对比与选型建议</title>
-  <meta name="description" content="14个微信公众号MCP Server深度对比评测" />
+  <title>{title} — 奥尔特云</title>
+  <meta name="description" content={description || '游戏开发 · 技术笔记 · 产业观察'} />
 </head>
 <body>
   <div class="container">
