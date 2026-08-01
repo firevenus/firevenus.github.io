@@ -206,7 +206,7 @@ tr:hover td{background:#f8fafc}
         <div class="slider-wrap">
           <input type="range" id="sl-edu" min="0" max="40" value="10" step="1" data-key="edu" style="accent-color:#8b5cf6">
         </div>
-        <div class="info-tip">高校 + 三甲医院</div>
+        <div class="info-tip">高校 + 基础教育 + 三甲医院 + 人均医疗</div>
       </div>
 
       <div class="slider-group">
@@ -250,14 +250,14 @@ tr:hover td{background:#f8fafc}
         <div class="slider-wrap">
           <input type="range" id="sl-clim" min="0" max="40" value="5" step="1" data-key="clim" style="accent-color:#06b6d4">
         </div>
-        <div class="info-tip">夏不热 + 冬有暖 + 湿度 + 日照</div>
+        <div class="info-tip">夏不热 + 冬有暖 + 湿度 + 日照 + 降水</div>
       </div>
 
       <div class="sum-bar ok" id="sumBar">
         <span>权重总和</span>
         <span class="sum-val" id="sumVal">100%</span>
       </div>
-      <div class="info-tip" style="margin-top:6px">总和不等于100%时自动归一化计算</div>
+      <div class="info-tip" style="margin-top:6px">权重总和固定为100%，调高一个维度会限制其他维度的上限</div>
     </div>
 
     <div class="card">
@@ -481,8 +481,26 @@ function refresh(){
 }
 
 // ===== 事件绑定 =====
+function clampWeights(activeDim){
+  const w = getWeights();
+  const sum = DIMS.reduce((s,d) => s + w[d], 0);
+  if(sum > 100 && activeDim){
+    const others = sum - w[activeDim];
+    w[activeDim] = Math.max(0, 100 - others);
+    document.getElementById("sl-"+activeDim).value = w[activeDim];
+  }
+  // 动态更新每个滑块的max = 100 - 其他维度总和
+  DIMS.forEach(d => {
+    const others = DIMS.filter(x => x !== d).reduce((s,x) => s + w[x], 0);
+    document.getElementById("sl-"+d).max = Math.max(0, 100 - others);
+  });
+}
+
 DIMS.forEach(d => {
-  document.getElementById("sl-"+d).addEventListener("input", refresh);
+  document.getElementById("sl-"+d).addEventListener("input", () => {
+    clampWeights(d);
+    refresh();
+  });
 });
 
 document.getElementById("searchBox").addEventListener("input", renderTable);
@@ -495,6 +513,7 @@ document.querySelectorAll(".preset-btn").forEach(btn => {
     DIMS.forEach(d => {
       document.getElementById("sl-"+d).value = preset[d];
     });
+    clampWeights(null);
     refresh();
   });
 });
