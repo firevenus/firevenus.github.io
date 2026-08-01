@@ -18,10 +18,14 @@ posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
   </header>
 
   <section class="features">
-    <div class="feature-card">
+    <a href="/juyi-weight-lab/" class="feature-card feature-link">
+      <h3>🔬 权重实验室</h3>
+      <p>7维度滑块实时调整，100城排名即时刷新。调出你自己的「完美城市」。</p>
+    </a>
+    <a href="/blog/mcp-wechat-publish" class="feature-card feature-link">
       <h3>AI × 微信公众号</h3>
       <p>14个 MCP Server 全景对比，实测选型，从踩坑到封装 Skill 的完整复盘。</p>
-    </div>
+    </a>
     <div class="feature-card">
       <h3>冻土之上系列</h3>
       <p>东北游戏产业深度分析，逆向选址，从宏观到微观的产业观察。</p>
@@ -120,6 +124,16 @@ posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
     line-height: 1.6;
     margin: 0;
   }
+  .feature-link {
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .feature-link:hover {
+    border-color: #2563eb;
+    box-shadow: 0 2px 12px rgba(37,99,235,0.12);
+  }
+  .feature-link:hover h3 { color: #2563eb; }
 
   .post-list {
     max-width: 680px;

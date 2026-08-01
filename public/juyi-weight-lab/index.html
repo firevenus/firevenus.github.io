@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>居易指数 · 权重实验室</title>
+<style>
+:root{
+  --bg:#f0f2f5; --card:#ffffff; --border:#e2e8f0;
+  --text:#1a202c; --text2:#64748b; --text3:#94a3b8;
+  --primary:#2563eb; --primary-bg:#eff6ff;
+  --green:#16a34a; --green-bg:#f0fdf4;
+  --red:#dc2626; --red-bg:#fef2f2;
+  --orange:#f59e0b;
+  --radius:12px; --shadow:0 1px 3px rgba(0,0,0,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.6; font-size:14px;
+}
+.header{
+  background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%);
+  color:#fff; padding:28px 32px; position:sticky; top:0; z-index:100;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+.header h1{font-size:22px; font-weight:700; margin-bottom:4px}
+.header .sub{font-size:13px; opacity:.85}
+.header .formula{
+  margin-top:10px; font-size:13px; background:rgba(255,255,255,.15);
+  padding:8px 16px; border-radius:8px; display:inline-block; font-family:monospace;
+}
+.container{display:flex; gap:20px; padding:20px; max-width:1600px; margin:0 auto}
+.left-panel{width:340px; flex-shrink:0}
+.right-panel{flex:1; min-width:0}
+
+.card{
+  background:var(--card); border-radius:var(--radius); padding:20px;
+  box-shadow:var(--shadow); margin-bottom:16px;
+}
+.card-title{
+  font-size:15px; font-weight:700; margin-bottom:16px;
+  display:flex; align-items:center; gap:8px;
+}
+.card-title .dot{width:8px;height:8px;border-radius:50%}
+
+/* 滑块 */
+.slider-group{margin-bottom:18px}
+.slider-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:6px}
+.slider-label{display:flex; align-items:center; gap:6px; font-weight:600; font-size:13px}
+.slider-label .color-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.slider-value{
+  font-family:monospace; font-size:14px; font-weight:700;
+  min-width:48px; text-align:right; padding:2px 8px; border-radius:6px;
+}
+.slider-wrap{position:relative; padding:4px 0}
+input[type=range]{
+  -webkit-appearance:none; width:100%; height:6px; border-radius:3px;
+  outline:none; cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; width:18px; height:18px; border-radius:50%;
+  background:#fff; border:3px solid var(--primary); cursor:pointer;
+  box-shadow:0 1px 4px rgba(0,0,0,.2); transition:transform .15s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+input[type=range]::-moz-range-thumb{
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  border:3px solid var(--primary);cursor:pointer;
+}
+
+/* 总和指示器 */
+.sum-bar{
+  margin-top:16px; padding:12px 16px; border-radius:8px;
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:13px; font-weight:600;
+}
+.sum-bar.ok{background:var(--green-bg); color:var(--green)}
+.sum-bar.warn{background:#fffbeb; color:var(--orange)}
+.sum-bar .sum-val{font-family:monospace; font-size:18px}
+
+/* 预设按钮 */
+.preset-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px}
+.preset-btn{
+  padding:10px 12px; border:1px solid var(--border); border-radius:8px;
+  background:var(--card); cursor:pointer; font-size:12px; font-weight:600;
+  transition:all .2s; text-align:left;
+}
+.preset-btn:hover{border-color:var(--primary); background:var(--primary-bg); color:var(--primary)}
+.preset-btn .preset-desc{font-size:11px; color:var(--text3); font-weight:400; margin-top:2px}
+
+/* 排名表 */
+.table-wrap{overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:13px}
+th{
+  text-align:left; padding:10px 8px; border-bottom:2px solid var(--border);
+  font-weight:700; color:var(--text2); white-space:nowrap; position:sticky; top:0;
+  background:var(--card);
+}
+td{padding:9px 8px; border-bottom:1px solid #f1f5f9; white-space:nowrap}
+tr:hover td{background:#f8fafc}
+.rank-cell{font-family:monospace; font-weight:700; text-align:center; min-width:40px}
+.rank-1{color:#f59e0b; font-size:16px}
+.rank-2{color:#94a3b8; font-size:15px}
+.rank-3{color:#b45309; font-size:15px}
+.city-name{font-weight:600}
+.score-cell{font-family:monospace; font-weight:700; text-align:right}
+.dim-cell{font-family:monospace; text-align:right; color:var(--text2); font-size:12px}
+.change-arrow{font-size:11px; font-weight:700; margin-left:4px}
+.change-up{color:var(--green)}
+.change-down{color:var(--red)}
+.change-same{color:var(--text3)}
+
+/* 搜索 */
+.search-box{
+  width:100%; padding:10px 14px; border:1px solid var(--border);
+  border-radius:8px; font-size:13px; margin-bottom:12px; outline:none;
+}
+.search-box:focus{border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-bg)}
+
+/* 统计条 */
+.stats-row{display:flex; gap:16px; margin-bottom:16px; flex-wrap:wrap}
+.stat-chip{
+  background:var(--card); padding:8px 14px; border-radius:8px;
+  box-shadow:var(--shadow); font-size:12px;
+}
+.stat-chip .stat-val{font-family:monospace; font-weight:700; font-size:16px; margin-left:4px}
+
+/* TOP10高亮 */
+.highlight-row td{background:#fffbeb !important}
+.highlight-row .rank-cell{color:var(--orange)}
+
+/* 维度颜色 */
+.surv-color{color:#ef4444} .econ-color{color:#f59e0b} .edu-color{color:#8b5cf6}
+.trans-color{color:#3b82f6} .eco-color{color:#22c55e} .culture-color{color:#ec4899}
+.clim-color{color:#06b6d4}
+
+.surv-bg{background:#ef4444} .econ-bg{background:#f59e0b} .edu-bg{background:#8b5cf6}
+.trans-bg{background:#3b82f6} .eco-bg{background:#22c55e} .culture-bg{background:#ec4899}
+.clim-bg{background:#06b6d4}
+
+/* 滚动 */
+.table-scroll{max-height:580px; overflow-y:auto; border-radius:8px}
+.table-scroll thead th{position:sticky; top:0; z-index:5}
+
+/* 响应式 */
+@media(max-width:900px){
+  .container{flex-direction:column}
+  .left-panel{width:100%}
+}
+
+/* tooltip */
+.info-tip{font-size:12px; color:var(--text3); margin-top:4px}
+
+/* 全选/折叠 */
+.full-list-toggle{
+  text-align:center; padding:12px; cursor:pointer; color:var(--primary);
+  font-weight:600; border-top:1px solid var(--border);
+}
+.full-list-toggle:hover{background:var(--primary-bg)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>居易指数 · 权重实验室</h1>
+  <div class="sub">拖动滑块调整7个维度权重，实时查看100城排名变化</div>
+  <div class="formula" id="formulaDisplay">加载中...</div>
+</div>
+
+<div class="container">
+  <!-- 左侧控制面板 -->
+  <div class="left-panel">
+    <div class="card">
+      <div class="card-title">
+        <span class="dot surv-bg"></span>权重调节
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-row">
+          <span class="slider-label"><span class="color-dot surv-bg"></span>生存力</span>
+          <span class="slider-value surv-color" id="val-surv">40%</span>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" id="sl-surv" min="0" max="60" value="40" step="1" data-key="surv" style="accent-color:#ef4444">
+        </div>
+        <div class="info-tip">房租 + 生活成本 + 10万续航月数</div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-row">
+          <span class="slider-label"><span class="color-dot econ-bg"></span>经济活力</span>
+          <span class="slider-value econ-color" id="val-econ">20%</span>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" id="sl-econ" min="0" max="60" value="20" step="1" data-key="econ" style="accent-color:#f59e0b">
+        </div>
+        <div class="info-tip">收入 + 创业 + 产业结构 + 人口吸引力</div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-row">
+          <span class="slider-label"><span class="color-dot edu-bg"></span>教育医疗</span>
+          <span class="slider-value edu-color" id="val-edu">10%</span>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" id="sl-edu" min="0" max="40" value="10" step="1" data-key="edu" style="accent-color:#8b5cf6">
+        </div>
+        <div class="info-tip">高校 + 三甲医院</div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-row">
+          <span class="slider-label"><span class="color-dot trans-bg"></span>交通便利</span>
+          <span class="slider-value trans-color" id="val-trans">10%</span>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" id="sl-trans" min="0" max="40" value="10" step="1" data-key="trans" style="accent-color:#3b82f6">
+        </div>
+        <div class="info-tip">机场 + 高铁 + 地铁 + 宽带</div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-row">
+          <span class="slider-label"><span class="color-dot eco-bg"></span>生态环境</span>
+          <span class="slider-value eco-color" id="val-eco">8%</span>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" id="sl-eco" min="0" max="40" value="8" step="1" data-key="eco" style="accent-color:#22c55e">
+        </div>
+        <div class="info-tip">绿化 + 空气质量 + 水质</div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-row">
+          <span class="slider-label"><span class="color-dot culture-bg"></span>文化生活</span>
+          <span class="slider-value culture-color" id="val-culture">7%</span>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" id="sl-culture" min="0" max="40" value="7" step="1" data-key="culture" style="accent-color:#ec4899">
+        </div>
+        <div class="info-tip">文化场馆 + 旅游资源 + 历史底蕴</div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-row">
+          <span class="slider-label"><span class="color-dot clim-bg"></span>气候舒适</span>
+          <span class="slider-value clim-color" id="val-clim">5%</span>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" id="sl-clim" min="0" max="40" value="5" step="1" data-key="clim" style="accent-color:#06b6d4">
+        </div>
+        <div class="info-tip">夏不热 + 冬有暖 + 湿度 + 日照</div>
+      </div>
+
+      <div class="sum-bar ok" id="sumBar">
+        <span>权重总和</span>
+        <span class="sum-val" id="sumVal">100%</span>
+      </div>
+      <div class="info-tip" style="margin-top:6px">总和不等于100%时自动归一化计算</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="dot" style="background:#64748b"></span>预设方案
+      </div>
+      <div class="preset-grid">
+        <button class="preset-btn" data-preset="default">
+          当前定稿 v4
+          <div class="preset-desc">40/20/10/10/8/7/5</div>
+        </button>
+        <button class="preset-btn" data-preset="survival">
+          纯生存优先
+          <div class="preset-desc">60/10/5/5/8/7/5</div>
+        </button>
+        <button class="preset-btn" data-preset="economy">
+          经济至上
+          <div class="preset-desc">25/40/10/10/5/5/5</div>
+        </button>
+        <button class="preset-btn" data-preset="balanced">
+          均衡分布
+          <div class="preset-desc">各≈14.3%</div>
+        </button>
+        <button class="preset-btn" data-preset="livability">
+          宜居导向
+          <div class="preset-desc">30/10/10/10/15/15/10</div>
+        </button>
+        <button class="preset-btn" data-preset="career">
+          职业发展
+          <div class="preset-desc">20/30/15/15/5/5/10</div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 右侧排名表 -->
+  <div class="right-panel">
+    <div class="stats-row" id="statsRow"></div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="dot" style="background:#2563eb"></span>实时排名
+        <span style="margin-left:auto; font-size:12px; font-weight:400; color:var(--text3)">
+          ← 左侧滑块拖动后自动刷新
+        </span>
+      </div>
+      <input type="text" class="search-box" id="searchBox" placeholder="搜索城市名或省份...">
+      <div class="table-scroll">
+        <table id="rankTable">
+          <thead>
+            <tr>
+              <th style="text-align:center;width:50px">排名</th>
+              <th>城市</th>
+              <th>省份</th>
+              <th style="text-align:right">总分</th>
+              <th class="surv-color" style="text-align:right">生存</th>
+              <th class="econ-color" style="text-align:right">经济</th>
+              <th class="edu-color" style="text-align:right">教医</th>
+              <th class="trans-color" style="text-align:right">交通</th>
+              <th class="eco-color" style="text-align:right">生态</th>
+              <th class="culture-color" style="text-align:right">文化</th>
+              <th class="clim-color" style="text-align:right">气候</th>
+              <th style="text-align:center;width:70px">变化</th>
+            </tr>
+          </thead>
+          <tbody id="rankBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== 100城数据 =====
+const CITIES = [{"name": "昆明", "prov": "云南", "surv": 74, "econ": 63, "edu": 44, "trans": 80, "eco": 92, "culture": 89, "clim": 90, "old_rank": 1}, {"name": "武汉", "prov": "湖北", "surv": 60, "econ": 83, "edu": 91, "trans": 96, "eco": 66, "culture": 74, "clim": 51, "old_rank": 2}, {"name": "长沙", "prov": "湖南", "surv": 66, "econ": 81, "edu": 78, "trans": 84, "eco": 58, "culture": 66, "clim": 47, "old_rank": 3}, {"name": "南京", "prov": "江苏", "surv": 49, "econ": 88, "edu": 86, "trans": 91, "eco": 73, "culture": 83, "clim": 56, "old_rank": 4}, {"name": "成都", "prov": "四川", "surv": 58, "econ": 81, "edu": 78, "trans": 96, "eco": 58, "culture": 66, "clim": 52, "old_rank": 5}, {"name": "西安", "prov": "陕西", "surv": 70, "econ": 69, "edu": 74, "trans": 90, "eco": 46, "culture": 56, "clim": 62, "old_rank": 6}, {"name": "北海", "prov": "广西", "surv": 100, "econ": 36, "edu": 16, "trans": 38, "eco": 86, "culture": 78, "clim": 59, "old_rank": 7}, {"name": "哈尔滨", "prov": "黑龙江", "surv": 72, "econ": 56, "edu": 71, "trans": 74, "eco": 71, "culture": 71, "clim": 67, "old_rank": 8}, {"name": "沈阳", "prov": "辽宁", "surv": 69, "econ": 66, "edu": 75, "trans": 83, "eco": 49, "culture": 51, "clim": 75, "old_rank": 9}, {"name": "贵阳", "prov": "贵州", "surv": 77, "econ": 53, "edu": 30, "trans": 77, "eco": 87, "culture": 84, "clim": 64, "old_rank": 10}, {"name": "重庆", "prov": "重庆", "surv": 71, "econ": 57, "edu": 60, "trans": 92, "eco": 67, "culture": 72, "clim": 46, "old_rank": 11}, {"name": "郑州", "prov": "河南", "surv": 72, "econ": 69, "edu": 54, "trans": 92, "eco": 38, "culture": 43, "clim": 68, "old_rank": 12}, {"name": "合肥", "prov": "安徽", "surv": 66, "econ": 74, "edu": 57, "trans": 83, "eco": 55, "culture": 60, "clim": 54, "old_rank": 13}, {"name": "杭州", "prov": "浙江", "surv": 40, "econ": 99, "edu": 78, "trans": 92, "eco": 68, "culture": 76, "clim": 46, "old_rank": 14}, {"name": "桂林", "prov": "广西", "surv": 92, "econ": 41, "edu": 20, "trans": 44, "eco": 81, "culture": 73, "clim": 64, "old_rank": 15}, {"name": "济南", "prov": "山东", "surv": 68, "econ": 76, "edu": 60, "trans": 81, "eco": 40, "culture": 45, "clim": 71, "old_rank": 16}, {"name": "大连", "prov": "辽宁", "surv": 58, "econ": 64, "edu": 60, "trans": 78, "eco": 72, "culture": 72, "clim": 84, "old_rank": 17}, {"name": "长春", "prov": "吉林", "surv": 76, "econ": 47, "edu": 54, "trans": 74, "eco": 60, "culture": 60, "clim": 75, "old_rank": 18}, {"name": "南宁", "prov": "广西", "surv": 76, "econ": 47, "edu": 28, "trans": 76, "eco": 69, "culture": 69, "clim": 56, "old_rank": 19}, {"name": "南昌", "prov": "江西", "surv": 76, "econ": 47, "edu": 42, "trans": 76, "eco": 60, "culture": 65, "clim": 49, "old_rank": 20}, {"name": "太原", "prov": "山西", "surv": 79, "econ": 47, "edu": 50, "trans": 77, "eco": 32, "culture": 45, "clim": 74, "old_rank": 21}, {"name": "广州", "prov": "广东", "surv": 40, "econ": 79, "edu": 84, "trans": 95, "eco": 65, "culture": 76, "clim": 52, "old_rank": 22}, {"name": "石家庄", "prov": "河北", "surv": 74, "econ": 57, "edu": 48, "trans": 80, "eco": 30, "culture": 45, "clim": 68, "old_rank": 23}, {"name": "遵义", "prov": "贵州", "surv": 98, "econ": 31, "edu": 20, "trans": 20, "eco": 68, "culture": 68, "clim": 67, "old_rank": 24}, {"name": "九江", "prov": "江西", "surv": 98, "econ": 31, "edu": 20, "trans": 26, "eco": 61, "culture": 61, "clim": 52, "old_rank": 25}, {"name": "呼和浩特", "prov": "内蒙古", "surv": 79, "econ": 45, "edu": 42, "trans": 59, "eco": 57, "culture": 52, "clim": 69, "old_rank": 26}, {"name": "大庆", "prov": "黑龙江", "surv": 89, "econ": 43, "edu": 30, "trans": 21, "eco": 61, "culture": 56, "clim": 70, "old_rank": 27}, {"name": "天津", "prov": "天津", "surv": 56, "econ": 61, "edu": 76, "trans": 89, "eco": 46, "culture": 54, "clim": 70, "old_rank": 28}, {"name": "福州", "prov": "福建", "surv": 58, "econ": 56, "edu": 54, "trans": 76, "eco": 77, "culture": 77, "clim": 55, "old_rank": 29}, {"name": "苏州", "prov": "江苏", "surv": 42, "econ": 86, "edu": 55, "trans": 88, "eco": 72, "culture": 80, "clim": 52, "old_rank": 30}, {"name": "鄂尔多斯", "prov": "内蒙古", "surv": 89, "econ": 43, "edu": 20, "trans": 21, "eco": 64, "culture": 59, "clim": 81, "old_rank": 31}, {"name": "青岛", "prov": "山东", "surv": 48, "econ": 65, "edu": 55, "trans": 88, "eco": 77, "culture": 77, "clim": 72, "old_rank": 32}, {"name": "大同", "prov": "山西", "surv": 100, "econ": 31, "edu": 22, "trans": 38, "eco": 29, "culture": 37, "clim": 71, "old_rank": 33}, {"name": "宜宾", "prov": "四川", "surv": 100, "econ": 33, "edu": 22, "trans": 38, "eco": 40, "culture": 40, "clim": 56, "old_rank": 34}, {"name": "曲靖", "prov": "云南", "surv": 100, "econ": 25, "edu": 18, "trans": 7, "eco": 62, "culture": 57, "clim": 86, "old_rank": 35}, {"name": "柳州", "prov": "广西", "surv": 98, "econ": 31, "edu": 20, "trans": 26, "eco": 56, "culture": 56, "clim": 56, "old_rank": 36}, {"name": "绵阳", "prov": "四川", "surv": 100, "econ": 36, "edu": 22, "trans": 21, "eco": 46, "culture": 46, "clim": 59, "old_rank": 37}, {"name": "兰州", "prov": "甘肃", "surv": 72, "econ": 50, "edu": 40, "trans": 75, "eco": 42, "culture": 42, "clim": 68, "old_rank": 38}, {"name": "大理", "prov": "云南", "surv": 80, "econ": 28, "edu": 18, "trans": 44, "eco": 86, "culture": 78, "clim": 85, "old_rank": 39}, {"name": "宁波", "prov": "浙江", "surv": 58, "econ": 61, "edu": 40, "trans": 82, "eco": 64, "culture": 69, "clim": 58, "old_rank": 40}, {"name": "宜昌", "prov": "湖北", "surv": 86, "econ": 48, "edu": 26, "trans": 24, "eco": 54, "culture": 54, "clim": 56, "old_rank": 41}, {"name": "烟台", "prov": "山东", "surv": 58, "econ": 55, "edu": 40, "trans": 75, "eco": 75, "culture": 70, "clim": 72, "old_rank": 42}, {"name": "衡阳", "prov": "湖南", "surv": 89, "econ": 44, "edu": 22, "trans": 31, "eco": 49, "culture": 49, "clim": 56, "old_rank": 43}, {"name": "运城", "prov": "山西", "surv": 100, "econ": 31, "edu": 22, "trans": 30, "eco": 27, "culture": 35, "clim": 70, "old_rank": 44}, {"name": "齐齐哈尔", "prov": "黑龙江", "surv": 94, "econ": 31, "edu": 28, "trans": 21, "eco": 57, "culture": 52, "clim": 71, "old_rank": 45}, {"name": "信阳", "prov": "河南", "surv": 82, "econ": 35, "edu": 40, "trans": 55, "eco": 48, "culture": 48, "clim": 55, "old_rank": 46}, {"name": "吴忠", "prov": "宁夏", "surv": 100, "econ": 25, "edu": 20, "trans": 20, "eco": 40, "culture": 35, "clim": 78, "old_rank": 47}, {"name": "嘉峪关", "prov": "甘肃", "surv": 100, "econ": 25, "edu": 16, "trans": 19, "eco": 46, "culture": 41, "clim": 82, "old_rank": 48}, {"name": "无锡", "prov": "江苏", "surv": 48, "econ": 72, "edu": 45, "trans": 78, "eco": 68, "culture": 73, "clim": 55, "old_rank": 49}, {"name": "株洲", "prov": "湖南", "surv": 65, "econ": 50, "edu": 55, "trans": 72, "eco": 52, "culture": 52, "clim": 50, "old_rank": 50}, {"name": "石嘴山", "prov": "宁夏", "surv": 100, "econ": 25, "edu": 20, "trans": 20, "eco": 40, "culture": 35, "clim": 78, "old_rank": 51}, {"name": "赣州", "prov": "江西", "surv": 89, "econ": 31, "edu": 20, "trans": 38, "eco": 56, "culture": 56, "clim": 53, "old_rank": 52}, {"name": "南充", "prov": "四川", "surv": 78, "econ": 35, "edu": 40, "trans": 55, "eco": 48, "culture": 48, "clim": 52, "old_rank": 53}, {"name": "南通", "prov": "江苏", "surv": 55, "econ": 60, "edu": 40, "trans": 75, "eco": 60, "culture": 65, "clim": 56, "old_rank": 54}, {"name": "南阳", "prov": "河南", "surv": 78, "econ": 38, "edu": 40, "trans": 55, "eco": 45, "culture": 45, "clim": 58, "old_rank": 55}, {"name": "常德", "prov": "湖南", "surv": 72, "econ": 38, "edu": 55, "trans": 55, "eco": 50, "culture": 50, "clim": 52, "old_rank": 56}, {"name": "徐州", "prov": "江苏", "surv": 65, "econ": 46, "edu": 46, "trans": 78, "eco": 45, "culture": 50, "clim": 62, "old_rank": 57}, {"name": "洛阳", "prov": "河南", "surv": 68, "econ": 45, "edu": 40, "trans": 75, "eco": 42, "culture": 55, "clim": 60, "old_rank": 58}, {"name": "海口", "prov": "海南", "surv": 55, "econ": 48, "edu": 28, "trans": 78, "eco": 88, "culture": 85, "clim": 58, "old_rank": 59}, {"name": "银川", "prov": "宁夏", "surv": 75, "econ": 35, "edu": 28, "trans": 55, "eco": 60, "culture": 55, "clim": 75, "old_rank": 60}, {"name": "厦门", "prov": "福建", "surv": 44, "econ": 49, "edu": 54, "trans": 78, "eco": 93, "culture": 90, "clim": 62, "old_rank": 61}, {"name": "岳阳", "prov": "湖南", "surv": 68, "econ": 42, "edu": 55, "trans": 55, "eco": 52, "culture": 52, "clim": 52, "old_rank": 62}, {"name": "拉萨", "prov": "西藏", "surv": 70, "econ": 30, "edu": 16, "trans": 55, "eco": 80, "culture": 77, "clim": 80, "old_rank": 63}, {"name": "泉州", "prov": "福建", "surv": 52, "econ": 60, "edu": 35, "trans": 75, "eco": 67, "culture": 67, "clim": 58, "old_rank": 64}, {"name": "泸州", "prov": "四川", "surv": 75, "econ": 35, "edu": 40, "trans": 55, "eco": 50, "culture": 50, "clim": 55, "old_rank": 65}, {"name": "秦皇岛", "prov": "河北", "surv": 68, "econ": 40, "edu": 35, "trans": 50, "eco": 68, "culture": 65, "clim": 72, "old_rank": 66}, {"name": "芜湖", "prov": "安徽", "surv": 62, "econ": 52, "edu": 40, "trans": 72, "eco": 55, "culture": 55, "clim": 55, "old_rank": 67}, {"name": "临沂", "prov": "山东", "surv": 72, "econ": 45, "edu": 35, "trans": 55, "eco": 37, "culture": 45, "clim": 62, "old_rank": 68}, {"name": "佛山", "prov": "广东", "surv": 50, "econ": 68, "edu": 35, "trans": 78, "eco": 55, "culture": 60, "clim": 55, "old_rank": 69}, {"name": "吉林市", "prov": "吉林", "surv": 86, "econ": 31, "edu": 25, "trans": 19, "eco": 49, "culture": 49, "clim": 68, "old_rank": 70}, {"name": "嘉兴", "prov": "浙江", "surv": 52, "econ": 62, "edu": 35, "trans": 75, "eco": 58, "culture": 63, "clim": 52, "old_rank": 71}, {"name": "景德镇", "prov": "江西", "surv": 78, "econ": 30, "edu": 25, "trans": 44, "eco": 58, "culture": 63, "clim": 55, "old_rank": 72}, {"name": "盐城", "prov": "江苏", "surv": 70, "econ": 45, "edu": 35, "trans": 55, "eco": 50, "culture": 50, "clim": 60, "old_rank": 73}, {"name": "襄阳", "prov": "湖北", "surv": 86, "econ": 25, "edu": 26, "trans": 38, "eco": 49, "culture": 49, "clim": 56, "old_rank": 74}, {"name": "上海", "prov": "上海", "surv": 12, "econ": 88, "edu": 96, "trans": 96, "eco": 69, "culture": 80, "clim": 52, "old_rank": 75}, {"name": "中山", "prov": "广东", "surv": 48, "econ": 77, "edu": 30, "trans": 55, "eco": 55, "culture": 60, "clim": 58, "old_rank": 76}, {"name": "包头", "prov": "内蒙古", "surv": 86, "econ": 31, "edu": 20, "trans": 21, "eco": 41, "culture": 49, "clim": 72, "old_rank": 77}, {"name": "北京", "prov": "北京", "surv": 10, "econ": 88, "edu": 100, "trans": 98, "eco": 61, "culture": 74, "clim": 68, "old_rank": 78}, {"name": "扬州", "prov": "江苏", "surv": 58, "econ": 50, "edu": 40, "trans": 55, "eco": 62, "culture": 67, "clim": 55, "old_rank": 79}, {"name": "温州", "prov": "浙江", "surv": 48, "econ": 60, "edu": 35, "trans": 75, "eco": 65, "culture": 70, "clim": 60, "old_rank": 80}, {"name": "潍坊", "prov": "山东", "surv": 65, "econ": 50, "edu": 35, "trans": 55, "eco": 42, "culture": 50, "clim": 65, "old_rank": 81}, {"name": "珠海", "prov": "广东", "surv": 42, "econ": 62, "edu": 30, "trans": 78, "eco": 83, "culture": 80, "clim": 58, "old_rank": 82}, {"name": "绍兴", "prov": "浙江", "surv": 52, "econ": 58, "edu": 35, "trans": 72, "eco": 60, "culture": 65, "clim": 52, "old_rank": 83}, {"name": "舟山", "prov": "浙江", "surv": 55, "econ": 50, "edu": 35, "trans": 50, "eco": 75, "culture": 70, "clim": 65, "old_rank": 84}, {"name": "莆田", "prov": "福建", "surv": 58, "econ": 50, "edu": 35, "trans": 55, "eco": 63, "culture": 63, "clim": 58, "old_rank": 85}, {"name": "蚌埠", "prov": "安徽", "surv": 72, "econ": 38, "edu": 35, "trans": 55, "eco": 37, "culture": 45, "clim": 60, "old_rank": 86}, {"name": "西宁", "prov": "青海", "surv": 72, "econ": 30, "edu": 25, "trans": 55, "eco": 60, "culture": 55, "clim": 72, "old_rank": 87}, {"name": "金华", "prov": "浙江", "surv": 55, "econ": 55, "edu": 35, "trans": 72, "eco": 55, "culture": 60, "clim": 55, "old_rank": 88}, {"name": "乌鲁木齐", "prov": "新疆", "surv": 62, "econ": 40, "edu": 35, "trans": 72, "eco": 48, "culture": 45, "clim": 65, "old_rank": 89}, {"name": "保定", "prov": "河北", "surv": 72, "econ": 42, "edu": 35, "trans": 55, "eco": 28, "culture": 38, "clim": 65, "old_rank": 90}, {"name": "惠州", "prov": "广东", "surv": 55, "econ": 55, "edu": 30, "trans": 55, "eco": 65, "culture": 65, "clim": 60, "old_rank": 91}, {"name": "济宁", "prov": "山东", "surv": 70, "econ": 42, "edu": 35, "trans": 55, "eco": 34, "culture": 42, "clim": 65, "old_rank": 92}, {"name": "邯郸", "prov": "河北", "surv": 72, "econ": 42, "edu": 35, "trans": 55, "eco": 28, "culture": 38, "clim": 65, "old_rank": 93}, {"name": "台州", "prov": "浙江", "surv": 52, "econ": 55, "edu": 35, "trans": 55, "eco": 58, "culture": 63, "clim": 58, "old_rank": 94}, {"name": "廊坊", "prov": "河北", "surv": 65, "econ": 48, "edu": 35, "trans": 55, "eco": 30, "culture": 38, "clim": 65, "old_rank": 95}, {"name": "唐山", "prov": "河北", "surv": 62, "econ": 50, "edu": 35, "trans": 55, "eco": 30, "culture": 40, "clim": 68, "old_rank": 96}, {"name": "马鞍山", "prov": "安徽", "surv": 65, "econ": 42, "edu": 35, "trans": 55, "eco": 37, "culture": 45, "clim": 58, "old_rank": 97}, {"name": "东莞", "prov": "广东", "surv": 35, "econ": 74, "edu": 30, "trans": 78, "eco": 55, "culture": 60, "clim": 58, "old_rank": 98}, {"name": "深圳", "prov": "广东", "surv": 16, "econ": 86, "edu": 42, "trans": 91, "eco": 78, "culture": 75, "clim": 60, "old_rank": 99}, {"name": "三亚", "prov": "海南", "surv": 30, "econ": 35, "edu": 18, "trans": 55, "eco": 93, "culture": 85, "clim": 55, "old_rank": 100}];
+
+// 维度key列表
+const DIMS = ["surv","econ","edu","trans","eco","culture","clim"];
+const DIM_LABELS = {
+  surv:"生存力", econ:"经济", edu:"教医", trans:"交通",
+  eco:"生态", culture:"文化", clim:"气候"
+};
+
+// 预设方案
+const PRESETS = {
+  default:   {surv:40, econ:20, edu:10, trans:10, eco:8,  culture:7, clim:5},
+  survival:  {surv:60, econ:10, edu:5,  trans:5,  eco:8,  culture:7, clim:5},
+  economy:   {surv:25, econ:40, edu:10, trans:10, eco:5,  culture:5, clim:5},
+  balanced:  {surv:14, econ:14, edu:14, trans:15, eco:14, culture:15, clim:14},
+  livability:{surv:30, econ:10, edu:10, trans:10, eco:15, culture:15, clim:10},
+  career:    {surv:20, econ:30, edu:15, trans:15, eco:5,  culture:5, clim:10},
+};
+
+// ===== 核心计算 =====
+function getWeights(){
+  const w = {};
+  DIMS.forEach(d => { w[d] = parseInt(document.getElementById("sl-"+d).value); });
+  return w;
+}
+
+function getNormalizedWeights(){
+  const w = getWeights();
+  const sum = DIMS.reduce((s,d) => s + w[d], 0);
+  if(sum === 0) return DIMS.reduce((o,d) => {o[d]=1/DIMS.length; return o}, {});
+  const nw = {};
+  DIMS.forEach(d => { nw[d] = w[d] / sum; });
+  return nw;
+}
+
+function computeScore(city, nw){
+  return DIMS.reduce((s,d) => s + city[d] * nw[d], 0);
+}
+
+function recompute(){
+  const nw = getNormalizedWeights();
+  const results = CITIES.map(c => ({
+    ...c,
+    newTotal: computeScore(c, nw)
+  }));
+  results.sort((a,b) => b.newTotal - a.newTotal);
+  return results;
+}
+
+// ===== 渲染 =====
+function updateFormula(){
+  const w = getWeights();
+  const sum = DIMS.reduce((s,d) => s + w[d], 0);
+  const nw = sum > 0 ? DIMS.reduce((o,d) => {o[d]=(w[d]/sum*100).toFixed(1); return o}, {}) : w;
+
+  // 公式显示
+  const parts = DIMS.map(d => `${DIM_LABELS[d]} ${nw[d]}%`);
+  document.getElementById("formulaDisplay").textContent =
+    "总分 = " + parts.join(" + ");
+
+  // 总和指示器
+  const sumBar = document.getElementById("sumBar");
+  const sumVal = document.getElementById("sumVal");
+  sumVal.textContent = sum + "%";
+  if(sum === 100){
+    sumBar.className = "sum-bar ok";
+  } else {
+    sumBar.className = "sum-bar warn";
+  }
+
+  // 更新滑块值显示
+  DIMS.forEach(d => {
+    document.getElementById("val-"+d).textContent = w[d] + "%";
+  });
+}
+
+function renderTable(){
+  const results = recompute();
+  const search = document.getElementById("searchBox").value.trim().toLowerCase();
+  const tbody = document.getElementById("rankBody");
+  tbody.innerHTML = "";
+
+  let shownCount = 0;
+  results.forEach((c, idx) => {
+    const rank = idx + 1;
+    const oldRank = c.old_rank;
+    const diff = oldRank - rank; // 正=上升, 负=下降
+
+    // 搜索过滤
+    if(search && !c.name.toLowerCase().includes(search) && !c.prov.toLowerCase().includes(search)) return;
+
+    let changeHTML;
+    if(diff > 0) changeHTML = `<span class="change-arrow change-up">↑${diff}</span>`;
+    else if(diff < 0) changeHTML = `<span class="change-arrow change-down">↓${-diff}</span>`;
+    else changeHTML = `<span class="change-arrow change-same">—</span>`;
+
+    const rankClass = rank <= 3 ? `rank-cell rank-${rank}` : "rank-cell";
+    const rowClass = rank <= 10 ? "highlight-row" : "";
+
+    const tr = document.createElement("tr");
+    tr.className = rowClass;
+    tr.innerHTML = `
+      <td class="${rankClass}">${rank}</td>
+      <td class="city-name">${c.name}</td>
+      <td style="color:var(--text2)">${c.prov}</td>
+      <td class="score-cell" style="color:var(--primary)">${c.newTotal.toFixed(1)}</td>
+      <td class="dim-cell surv-color">${c.surv}</td>
+      <td class="dim-cell econ-color">${c.econ}</td>
+      <td class="dim-cell edu-color">${c.edu}</td>
+      <td class="dim-cell trans-color">${c.trans}</td>
+      <td class="dim-cell eco-color">${c.eco}</td>
+      <td class="dim-cell culture-color">${c.culture}</td>
+      <td class="dim-cell clim-color">${c.clim}</td>
+      <td style="text-align:center">${changeHTML}</td>
+    `;
+    tbody.appendChild(tr);
+    shownCount++;
+  });
+
+  // 统计条
+  renderStats(results);
+}
+
+function renderStats(results){
+  const top10 = results.slice(0, 10);
+  const top3 = results.slice(0, 3);
+  const statsRow = document.getElementById("statsRow");
+
+  // 找沈阳
+  const shenyang = results.find(c => c.name === "沈阳");
+  const shenyangRank = shenyang ? results.indexOf(shenyang) + 1 : "—";
+
+  const top3Str = top3.map((c,i) => `${c.name}`).join(" · ");
+
+  statsRow.innerHTML = `
+    <div class="stat-chip">TOP3<span class="stat-val" style="color:var(--primary)">${top3Str}</span></div>
+    <div class="stat-chip">TOP10均分<span class="stat-val">${(top10.reduce((s,c)=>s+c.newTotal,0)/10).toFixed(1)}</span></div>
+    <div class="stat-chip">沈阳排名<span class="stat-val" style="color:var(--orange)">#${shenyangRank}</span></div>
+    <div class="stat-chip">最高分<span class="stat-val">${results[0].newTotal.toFixed(1)}</span></div>
+    <div class="stat-chip">最低分<span class="stat-val">${results[99].newTotal.toFixed(1)}</span></div>
+  `;
+}
+
+function refresh(){
+  updateFormula();
+  renderTable();
+}
+
+// ===== 事件绑定 =====
+DIMS.forEach(d => {
+  document.getElementById("sl-"+d).addEventListener("input", refresh);
+});
+
+document.getElementById("searchBox").addEventListener("input", renderTable);
+
+// 预设按钮
+document.querySelectorAll(".preset-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const preset = PRESETS[btn.dataset.preset];
+    if(!preset) return;
+    DIMS.forEach(d => {
+      document.getElementById("sl-"+d).value = preset[d];
+    });
+    refresh();
+  });
+});
+
+// 初始化
+refresh();
+</script>
+</body>
+</html>
