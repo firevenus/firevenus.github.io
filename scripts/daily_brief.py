@@ -177,6 +177,7 @@ def main():
             ('Eurogamer', '#be185d', fetch_rss('https://www.eurogamer.net/feed')),
             ('机核 GCORES', '#7c2d12', fetch_rss('https://www.gcores.com/rss'))]
     crypto = [('Cointelegraph', '#b45309', fetch_rss('https://cointelegraph.com/rss')),
+              ('RH Chain', '#dc2626', fetch_rss('https://news.google.com/rss/search?q=robinhood%20chain&hl=en-US&gl=US&ceid=US:en')),
               ('中文聚合', '#0e7490', fetch_rss('https://news.google.com/rss/search?q=bitcoin%20crypto&hl=zh-CN&gl=CN&ceid=CN:zh-Hans'))]
     cn = [('华尔街见闻', '#be123c', fetch_wscn())]
     now = datetime.datetime.now().strftime('%Y-%m-%d %A')
@@ -200,7 +201,7 @@ def main():
     ('Chris Camillo (X)', 'https://x.com/chriscamillo', '社交套利信号源'),
     ('因子清单', 'https://enki-yan.pages.dev/', 'BTC 因子注册表'),
 ], '#0f6e56')}
-<footer>晨间信息流 v0.4 · 每日 07:00 自动更新 · 数据来自公开 RSS/API</footer>
+<footer>晨间信息流 v0.8 · 每日 07:00 自动更新 · 数据来自公开 RSS/API</footer>
 </div></body></html>'''
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, 'w', encoding='utf-8') as f:
