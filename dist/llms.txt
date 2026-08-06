@@ -1,0 +1,27 @@
+# 奥尔特云 — Enki Yan 的个人网站
+
+> 游戏开发 · 技术笔记 · 产业观察 ｜ 冻土回声 · Enki Yan
+
+## 简介
+
+这是 Enki Yan（闫思）的个人网站。他是一名金融学副教授背景的独立开发者，独立游戏品牌「冻土回声」负责人，也做量化研究、内容创作与开源工具。本站是 AI 友好的：提供 RSS、sitemap 与本文档（llms.txt），欢迎 AI 抓取与引用。
+
+## 关键页面
+
+- [首页](https://firevenus.github.io/)：站点入口
+- [RSS 订阅](https://firevenus.github.io/rss.xml)：全量文章订阅（AI 优先使用此源）
+- [Sitemap](https://firevenus.github.io/sitemap-index.xml)：全站 URL 清单
+- [权重实验室](https://firevenus.github.io/juyi-weight-lab/)：中国 100 城宜居指数交互工具（7 维度权重可调）
+- [晨间信息流](https://firevenus.github.io/morning/)：每日 07:00 自动更新的多源新闻晨报（全球/AI/游戏/加密/中文快讯）
+
+## 博客文章
+
+- [10万块在100座城市能撑多久？我用AI做了个可视化工具](https://firevenus.github.io/blog/juyi-weight-lab/)：开源交互工具「居易指数·权重实验室」——7维度滑块实时调整，100城排名即时刷新
+- [想用AI写完文章之后直接发到微信，该怎么做？](https://firevenus.github.io/blog/mcp-wechat-publish/)：14个微信公众号 MCP Server 全景对比与选型建议
+- [Waiting on AI? Here Are the YouTube Channels I Actually Listen to](https://firevenus.github.io/blog/waiting-on-ai-youtube-channels/)：经核实的 YouTube 频道清单（活跃度验证）
+
+## 数据规范
+
+- 内容语言：简体中文为主，部分文章英文
+- 更新频率：博客不定期；晨间信息流每日 07:00（北京时间）
+- 技术栈：Astro 5 静态站点，部署于 GitHub Pages 与 Cloudflare Pages
