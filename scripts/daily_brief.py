@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-daily_brief.py — 晨间信息流晨报生成器（v0.9 卡片式）
+daily_brief.py — 晨间信息流晨报生成器（v0.10 卡片式）
 - 卡片网格布局（Google News 风格），大字，缩略图 16:9，源徽章
 - 抓取失败源静默隐藏（不渲染占位条目）
 - 输出: self-contained HTML → <repo>/public/morning/index.html
 运行: python scripts/daily_brief.py
+v0.10: +header 返回首页链接
 v0.9: +新浪 7x24 中文快讯源；收藏区 +Lyn Alden/Glassnode/Kobeissi Letter
 v0.8: +RH Chain 加密源（Google News 聚合）
 """
@@ -160,6 +161,8 @@ CSS = '''
 body{font-family:'Inter','SF Pro Text','PingFang SC','Hiragino Sans GB','Microsoft YaHei',-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1000px;margin:0 auto;padding:28px 20px 48px}
 header{padding:12px 2px 6px}
+.home{display:inline-block;font-size:13px;font-weight:600;color:var(--mut);text-decoration:none;margin-bottom:10px}
+.home:hover{color:var(--ac,#2563eb)}
 h1{font-size:31px;font-weight:800;letter-spacing:-.5px}
 .sub{color:var(--mut);font-size:14px;margin-top:8px}
 .sub b{color:var(--ac,#2563eb);font-weight:600}
@@ -213,7 +216,7 @@ def main():
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>晨间信息流 · {now}</title>
 <style>{CSS}</style></head><body><div class="wrap">
-<header><h1>☕ 晨间信息流</h1>
+<header><a class="home" href="/">← 返回首页</a><h1>☕ 晨间信息流</h1>
 <div class="sub">{now} · 更新于 <b>{datetime.datetime.now().strftime('%H:%M')}</b> · 点击卡片直达原文</div></header>
 {render_section('🌍', '全球重要新闻', world, '#2563eb')}
 {render_section('🤖', 'AI 产业', ai, '#7c3aed')}
@@ -231,7 +234,7 @@ def main():
     ('Kobeissi Letter (X)', 'https://x.com/KobeissiLetter', '美股市场快评'),
     ('因子清单', 'https://github.com/firevenus/firevenus.github.io', 'BTC 因子注册表(本地)'),
 ], '#0f6e56')}
-<footer>晨间信息流 v0.9 · 每日 07:00 自动更新 · 数据来自公开 RSS/API</footer>
+<footer>晨间信息流 v0.10 · 每日 07:00 自动更新 · 数据来自公开 RSS/API</footer>
 </div></body></html>'''
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, 'w', encoding='utf-8') as f:
