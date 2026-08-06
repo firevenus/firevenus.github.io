@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-daily_brief.py — 晨间信息流晨报生成器（v0.4 卡片式）
+daily_brief.py — 晨间信息流晨报生成器（v0.9 卡片式）
 - 卡片网格布局（Google News 风格），大字，缩略图 16:9，源徽章
 - 抓取失败源静默隐藏（不渲染占位条目）
 - 输出: self-contained HTML → <repo>/public/morning/index.html
 运行: python scripts/daily_brief.py
+v0.9: +新浪 7x24 中文快讯源；收藏区 +Lyn Alden/Glassnode/Kobeissi Letter
+v0.8: +RH Chain 加密源（Google News 聚合）
 """
 import os, re, html as htmlmod, datetime, difflib, xml.etree.ElementTree as ET
 
@@ -90,6 +92,28 @@ def fetch_wscn(limit=6):
         return []
     return out
 
+def fetch_sina(limit=6):
+    """新浪财经 7x24 全球直播快讯（公开 API，无需签名，稳定）"""
+    out = []
+    try:
+        r = requests.get('https://zhibo.sina.com.cn/api/zhibo/feed?page=1&page_size=%d&zhibo_id=152&tag_id=0&dire=f&dpc=1' % (limit + 4),
+                         headers=H, timeout=10)
+        for it in r.json().get('result', {}).get('data', {}).get('feed', {}).get('list', []):
+            t = clean_desc(it.get('rich_text') or '')
+            if t:
+                out.append({'title': t,
+                            'link': it.get('docurl') or 'https://zhibo.sina.com.cn/7x24',
+                            'date': it.get('create_time') or '', 'thumb': None})
+    except Exception:
+        return []
+    return out
+
+def fmt_sina_time(s):
+    try:
+        return datetime.datetime.strptime(s, '%Y-%m-%d %H:%M:%S').strftime('%m-%d %H:%M')
+    except Exception:
+        return ''
+
 def fmt_date(s):
     try:
         return datetime.datetime.strptime(s[:25], '%a, %d %b %Y %H:%M:%S').strftime('%m-%d %H:%M')
@@ -108,7 +132,7 @@ def render_section(icon, title, sources, accent):
             thumb = ''
             if it.get('thumb'):
                 thumb = f'<img class="thumb" src="{htmlmod.escape(it["thumb"], quote=True)}" alt="" loading="lazy" onerror="this.parentNode.classList.add(\'noimg\')">'
-            d = fmt_date(it['date'])
+            d = fmt_date(it['date']) or fmt_sina_time(it['date'])
             meta = f'<span class="meta-time">{d}</span>' if d else ''
             tip = f'<div class="tip">{htmlmod.escape(it["desc"])}</div>' if it.get('desc') else ''
             cards.append(
@@ -179,7 +203,10 @@ def main():
     crypto = [('Cointelegraph', '#b45309', fetch_rss('https://cointelegraph.com/rss')),
               ('RH Chain', '#dc2626', fetch_rss('https://news.google.com/rss/search?q=robinhood%20chain&hl=en-US&gl=US&ceid=US:en')),
               ('中文聚合', '#0e7490', fetch_rss('https://news.google.com/rss/search?q=bitcoin%20crypto&hl=zh-CN&gl=CN&ceid=CN:zh-Hans'))]
-    cn = [('华尔街见闻', '#be123c', fetch_wscn())]
+    # 中文快讯（华尔街见闻 + 新浪 7x24 各取 5 条，合并去重）
+    cn = [('华尔街见闻', '#be123c', fetch_wscn(5)),
+          ('新浪 7x24', '#ea580c', fetch_sina(5))]
+    # 收藏与信号源（第 3/4 层直达卡片，非抓取）
     now = datetime.datetime.now().strftime('%Y-%m-%d %A')
     page = f'''<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
@@ -198,10 +225,13 @@ def main():
     ('金十数据', 'https://www.jin10.com/', '宏观速递'),
     ('Rob Carver 博客', 'https://qoppac.blogspot.com', '系统化交易'),
     ('QuantStart', 'https://www.quantstart.com/articles/', '量化教程'),
+    ('Lyn Alden', 'https://www.lynalden.com/', '宏观 + BTC 深度'),
+    ('Glassnode Insights', 'https://insights.glassnode.com/', '链上数据周报'),
     ('Chris Camillo (X)', 'https://x.com/chriscamillo', '社交套利信号源'),
-    ('因子清单', 'https://enki-yan.pages.dev/', 'BTC 因子注册表'),
+    ('Kobeissi Letter (X)', 'https://x.com/KobeissiLetter', '美股市场快评'),
+    ('因子清单', 'https://github.com/firevenus/firevenus.github.io', 'BTC 因子注册表(本地)'),
 ], '#0f6e56')}
-<footer>晨间信息流 v0.8 · 每日 07:00 自动更新 · 数据来自公开 RSS/API</footer>
+<footer>晨间信息流 v0.9 · 每日 07:00 自动更新 · 数据来自公开 RSS/API</footer>
 </div></body></html>'''
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, 'w', encoding='utf-8') as f:
