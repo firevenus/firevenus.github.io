@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-daily_brief.py — 晨间信息流晨报生成器（v0.10 卡片式）
+daily_brief.py — 晨间信息流晨报生成器（v0.11 卡片式）
 - 卡片网格布局（Google News 风格），大字，缩略图 16:9，源徽章
 - 抓取失败源静默隐藏（不渲染占位条目）
 - 输出: self-contained HTML → <repo>/public/morning/index.html
 运行: python scripts/daily_brief.py
+v0.11: +回到顶部按钮
 v0.10: +header 返回首页链接
 v0.9: +新浪 7x24 中文快讯源；收藏区 +Lyn Alden/Glassnode/Kobeissi Letter
 v0.8: +RH Chain 加密源（Google News 聚合）
@@ -189,11 +190,19 @@ h2{font-size:20px;font-weight:800;margin-bottom:16px;display:flex;align-items:ce
 .lc-name{display:block;font-size:15px;font-weight:700;color:#1b1d23}
 .lc-note{display:block;font-size:13px;color:var(--mut);margin-top:3px}
 footer{color:#a3a3ad;font-size:12.5px;text-align:center;padding:24px 0 8px}
+.back-to-top{position:fixed;right:24px;bottom:24px;width:44px;height:44px;border:none;border-radius:50%;background:#2563eb;color:#fff;font-size:20px;line-height:1;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.35);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .2s,transform .2s,visibility .2s,background .15s;z-index:999}
+.back-to-top:hover{background:#1d4ed8}
+.back-to-top.visible{opacity:1;visibility:visible;transform:translateY(0)}
+@media(max-width:640px){.back-to-top{right:16px;bottom:16px;width:40px;height:40px}}
 @media(max-width:640px){.wrap{padding:18px 12px 36px}h1{font-size:26px}h2{font-size:18px}.grid{grid-template-columns:1fr 1fr;gap:10px}.item-title{font-size:15px}}
 @media(max-width:420px){.grid{grid-template-columns:1fr}}
 '''
 
 def main():
+    BTT_JS = ("(function(){var b=document.querySelector('.back-to-top');if(!b)return;"
+              "function t(){b.classList.toggle('visible',window.scrollY>400)}"
+              "window.addEventListener('scroll',t,{passive:true});t();"
+              "b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})})();")
     world = [('全球要闻', '#b91c1c', fetch_rss('https://feeds.bbci.co.uk/news/world/rss.xml')),
              ('科技', '#7c3aed', fetch_rss('https://feeds.bbci.co.uk/news/technology/rss.xml')),
              ('商业', '#1d4ed8', fetch_rss('https://feeds.bbci.co.uk/news/business/rss.xml')),
@@ -234,7 +243,9 @@ def main():
     ('Kobeissi Letter (X)', 'https://x.com/KobeissiLetter', '美股市场快评'),
     ('因子清单', 'https://github.com/firevenus/firevenus.github.io', 'BTC 因子注册表(本地)'),
 ], '#0f6e56')}
-<footer>晨间信息流 v0.10 · 每日 07:00 自动更新 · 数据来自公开 RSS/API</footer>
+<footer>晨间信息流 v0.11 · 每日 07:00 自动更新 · 数据来自公开 RSS/API</footer>
+<button class="back-to-top" type="button" aria-label="回到顶部" title="回到顶部">↑</button>
+<script>{BTT_JS}</script>
 </div></body></html>'''
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, 'w', encoding='utf-8') as f:

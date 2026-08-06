@@ -29,5 +29,56 @@ const { title, description } = Astro.props;
   <div class="container">
     <slot />
   </div>
+  <button id="back-to-top" type="button" aria-label="回到顶部" title="回到顶部">↑</button>
+  <script>
+    const btn = document.getElementById('back-to-top');
+    const toggle = () => {
+      const show = window.scrollY > 400;
+      btn.classList.toggle('visible', show);
+    };
+    window.addEventListener('scroll', toggle, { passive: true });
+    toggle();
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
 </body>
+<style>
+  #back-to-top {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: #2563eb;
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.2s, transform 0.2s, visibility 0.2s, background 0.15s;
+    z-index: 999;
+  }
+  #back-to-top:hover {
+    background: #1d4ed8;
+  }
+  #back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  @media (max-width: 640px) {
+    #back-to-top {
+      right: 16px;
+      bottom: 16px;
+      width: 40px;
+      height: 40px;
+    }
+  }
+</style>
 </html>
