@@ -16,6 +16,14 @@ const { title, description } = Astro.props;
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title} — 奥尔特云</title>
   <meta name="description" content={description || '游戏开发 · 技术笔记 · 产业观察'} />
+  <link rel="canonical" href={Astro.url.origin + Astro.url.pathname} />
+  <link rel="alternate" type="application/rss+xml" title="奥尔特云 RSS" href="/rss.xml" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="奥尔特云" />
+  <meta property="og:title" content={`${title} — 奥尔特云`} />
+  <meta property="og:description" content={description || '游戏开发 · 技术笔记 · 产业观察'} />
+  <meta property="og:url" content={Astro.url.origin + Astro.url.pathname} />
+  <meta name="twitter:card" content="summary" />
 </head>
 <body>
   <div class="container">

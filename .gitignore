@@ -3,3 +3,6 @@ dist/
 .astro/
 .DS_Store
 *.log
+
+# 不提交 lock（交接文档规则）
+package-lock.json
