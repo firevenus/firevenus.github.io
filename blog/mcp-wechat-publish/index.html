@@ -1,0 +1,712 @@
+<!DOCTYPE html><html lang="zh-CN" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>想用AI写完文章之后直接发到微信，该怎么做？ — 奥尔特云</title><meta name="description" content="游戏开发 · 技术笔记 · 产业观察"><link rel="canonical" href="https://firevenus.github.io/blog/mcp-wechat-publish/"><link rel="alternate" type="application/rss+xml" title="奥尔特云 RSS" href="/rss.xml"><meta property="og:type" content="website"><meta property="og:site_name" content="奥尔特云"><meta property="og:title" content="想用AI写完文章之后直接发到微信，该怎么做？ — 奥尔特云"><meta property="og:description" content="游戏开发 · 技术笔记 · 产业观察"><meta property="og:url" content="https://firevenus.github.io/blog/mcp-wechat-publish/"><meta name="twitter:card" content="summary"><style>:root{--bg: #fff;--text: #1a1a2e;--text-secondary: #555;--border: #e0e0e0;--code-bg: #f5f5f5;--blockquote-bg: #f0f7ff;--blockquote-border: #4a90d9;--table-stripe: #f9fafb;--table-header: #f0f4f8;--link: #2563eb;--hr: #e5e7eb}*,*:before,*:after{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Helvetica Neue,Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.8;font-size:16px}.container{max-width:860px;margin:0 auto;padding:40px 24px 80px}.article-header{text-align:center;padding:60px 0 40px;border-bottom:1px solid var(--hr);margin-bottom:40px}.article-header h1{font-size:2.2em;font-weight:800;line-height:1.3;margin-bottom:16px;color:#111}.article-meta{color:var(--text-secondary);font-size:.92em}.article-meta span{margin:0 8px}h2{font-size:1.55em;font-weight:700;margin:48px 0 16px;padding-bottom:8px;border-bottom:2px solid var(--border);color:#111}h3{font-size:1.2em;font-weight:700;margin:32px 0 12px;color:#222}h4{font-size:1.05em;font-weight:700;margin:24px 0 8px;color:#333}p{margin:12px 0}strong{color:#111;font-weight:700}a{color:var(--link);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}a:hover{border-bottom-color:var(--link)}blockquote{background:var(--blockquote-bg);border-left:4px solid var(--blockquote-border);padding:16px 20px;margin:20px 0;border-radius:0 8px 8px 0;color:#3a3a4a;font-size:.95em}blockquote p{margin:6px 0}code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:SF Mono,Fira Code,Consolas,monospace;font-size:.9em;color:#d63384}pre{background:#1e1e2e;color:#cdd6f4;padding:20px 24px;border-radius:8px;overflow-x:auto;margin:20px 0;font-size:.88em;line-height:1.6}pre code{background:none;padding:0;color:inherit;font-size:inherit}.table-wrapper{overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px}table{width:100%;border-collapse:collapse;font-size:.9em;min-width:600px}thead th{background:var(--table-header);font-weight:700;padding:12px 14px;text-align:left;border-bottom:2px solid var(--border);white-space:nowrap;font-size:.88em;color:#333}tbody td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}tbody tr:nth-child(2n){background:var(--table-stripe)}tbody tr:hover{background:#f0f7ff}ul,ol{margin:10px 0;padding-left:24px}li{margin:6px 0;line-height:1.7}ul ul,ol ol{margin:4px 0}hr{border:none;border-top:1px solid var(--hr);margin:40px 0}.highlight-box{background:linear-gradient(135deg,#f0f7ff,#e8f4fd);border:1px solid #b8d8f0;border-radius:8px;padding:16px 20px;margin:20px 0}.highlight-box strong{color:#1a56db}.check{color:#16a34a}.cross{color:#dc2626}.article-footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--hr);color:var(--text-secondary);font-size:.9em;text-align:center}@media(max-width:640px){.container{padding:20px 16px 60px}.article-header{padding:40px 0 24px}.article-header h1{font-size:1.6em}h2{font-size:1.3em}pre{padding:14px 16px;font-size:.82em}}#back-to-top[data-astro-cid-37fxchfa]{position:fixed;right:24px;bottom:24px;width:44px;height:44px;border:none;border-radius:50%;background:#2563eb;color:#fff;font-size:20px;line-height:1;cursor:pointer;box-shadow:0 4px 14px #2563eb59;opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .2s,transform .2s,visibility .2s,background .15s;z-index:999}#back-to-top[data-astro-cid-37fxchfa]:hover{background:#1d4ed8}#back-to-top[data-astro-cid-37fxchfa].visible{opacity:1;visibility:visible;transform:translateY(0)}@media(max-width:640px){#back-to-top[data-astro-cid-37fxchfa]{right:16px;bottom:16px;width:40px;height:40px}}
+.post-header[data-astro-cid-2q5oecfc]{text-align:center;padding:60px 0 16px;margin-bottom:40px}.post-header[data-astro-cid-2q5oecfc] h1[data-astro-cid-2q5oecfc]{font-size:2.2em;font-weight:800;line-height:1.3;margin-bottom:12px;color:#111}.post-date[data-astro-cid-2q5oecfc]{color:#888;font-size:.95em}.post-body[data-astro-cid-2q5oecfc]{padding-bottom:60px}@media(max-width:640px){.post-header[data-astro-cid-2q5oecfc]{padding:40px 0 12px}.post-header[data-astro-cid-2q5oecfc] h1[data-astro-cid-2q5oecfc]{font-size:1.6em}}
+</style></head> <body data-astro-cid-37fxchfa> <div class="container" data-astro-cid-37fxchfa>  <header class="post-header" data-astro-cid-2q5oecfc> <h1 data-astro-cid-2q5oecfc>想用AI写完文章之后直接发到微信，该怎么做？</h1> <time class="post-date" datetime="2026-08-01T00:00:00.000Z" data-astro-cid-2q5oecfc> 2026年8月1日 </time> </header> <article class="post-body" data-astro-cid-2q5oecfc>  <blockquote>
+<p>本文复盘了一次完整的微信公众号 MCP Server 选型过程：从 GitHub/Gitee 搜到 14 个相关项目，逐一拆解功能矩阵，到最终基于实测体验选出 5 个活跃项目，推荐两个组合方案。如果你也想用 AI 写完文章后一句话发到公众号草稿箱，这篇能帮你少走弯路。</p>
+</blockquote>
+<blockquote>
+<p>以下是目前 AI 能找到的几个用 AI 把文章直接发布到微信公众号草稿箱的 MCP，如有遗漏，欢迎大家补充。如果有任何对于功能改进上的建议，也随时欢迎大家提出。</p>
+</blockquote>
+<hr>
+<h2 id="一为什么需要-mcp为什么只能发到草稿箱">一、为什么需要 MCP？为什么只能发到草稿箱？</h2>
+<p>微信公众号后台的编辑器已支持导入 Markdown 文件，但仅限于基础的格式转换，没有主题美化、素材管理、草稿 CRUD 等能力。而通过 API 发草稿需要处理 access_token、multipart 上传、内联 CSS 等一堆细节。对于用 AI 助手辅助写作的人来说，“写完 Markdown → 一句话发到草稿箱、带主题排版、自动上传封面”才是最自然的流程。</p>
+<p>MCP（Model Context Protocol）让 AI 助手直接调用工具完成任务。于是问题变成：<strong>哪个 MCP Server 能用？</strong></p>
+<p>答案是：没有一个能打的——但拼起来可以。</p>
+<p><strong>那为什么只能发到草稿箱，不能直接发布？</strong></p>
+<p>两方面原因：</p>
+<p><strong>第一，微信公众号 API 本身的限制。</strong> 微信公众号的 <code>freepublish</code>（发布到公开）接口有权限门槛——未认证的订阅号调用会直接返回 48001 错误（api unauthorized），根本发不出去。即使公众号已完成认证，部分接口也仅对服务号开放。所以对于大多数个人运营者来说，通过 API “直接发布”在技术层面就走不通，只能调 <code>draft/add</code> 接口把文章先存进草稿箱。</p>
+<p><strong>第二，AI 写完的文章需要人工再审核一遍。</strong> AI 辅助写作虽然效率高，但难免出现事实偏差、措辞不当、排版错位、封面图不匹配等问题。把文章发到草稿箱而不是直接发布，相当于留了一道人工把关的工序——在公众号后台预览确认无误后，手动点击”群发”即可。这不是能力不够，而是工作流设计上最合理的一步：<strong>AI 负责把活干到 90%，人负责最后那 10% 的把关。</strong></p>
+<hr>
+<h2 id="二14-个项目全景扫描">二、14 个项目全景扫描</h2>
+<p>在 GitHub 和 Gitee 上搜索”微信公众号 MCP""WeChat Official Account MCP""markdown to wechat”等关键词，共发现 <strong>14 个相关项目</strong>，按功能定位分为三类：</p>
+<h3 id="a-类排版--发草稿有主题美化">A 类：排版 + 发草稿（有主题美化）</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>#</th><th>项目名</th><th>Repo</th><th>语言</th><th>最近更新</th></tr></thead><tbody><tr><td>1</td><td><strong>文颜 MCP</strong></td><td>github.com/caol64/wenyan-mcp</td><td>TypeScript</td><td>2026-04</td></tr><tr><td>2</td><td><strong>markdown2wechat</strong></td><td>github.com/maricoxu/markdown2wechat-mcp</td><td>TypeScript (Fork)</td><td>2025-11</td></tr><tr><td>3</td><td><strong>夏颜 MCP</strong></td><td>github.com/herofox2024/xiayan-mcp</td><td>Python</td><td>2025-12</td></tr><tr><td>4</td><td><strong>floodsung/wenyan-mcp</strong></td><td>github.com/floodsung/wenyan-mcp</td><td>TypeScript (Fork)</td><td>2026-02</td></tr><tr><td>5</td><td><strong>md2wechat-mcp-server</strong></td><td>github.com/geekjourneyx/md2wechat-mcp-server</td><td>Go</td><td>2025-06</td></tr></tbody></table>
+<h3 id="b-类api-全功能管理草稿-crud--发布--素材">B 类：API 全功能管理（草稿 CRUD + 发布 + 素材）</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>#</th><th>项目名</th><th>Repo</th><th>语言</th><th>最近更新</th></tr></thead><tbody><tr><td>6</td><td><strong>wechat-official-account-mcp</strong></td><td>github.com/xwang152-jack/wechat-official-account-mcp</td><td>TypeScript</td><td>2026-05</td></tr><tr><td>7</td><td><strong>oukanghua/wechat_official_account_mcp</strong></td><td>github.com/oukanghua/wechat_official_account_mcp</td><td>Python</td><td>2026-05</td></tr><tr><td>8</td><td><strong>kakaxi3019/wechat_oa_api_mcp</strong></td><td>github.com/kakaxi3019/wechat_oa_api_mcp</td><td>Python</td><td>2025-11</td></tr><tr><td>9</td><td><strong>tc6-01/weixin-mcp</strong></td><td>github.com/tc6-01/weixin-mcp</td><td>Go</td><td>2025-06</td></tr><tr><td>10</td><td><strong>wechat-publisher-mcp</strong></td><td>github.com/BobGod/wechat-publisher-mcp</td><td>JavaScript</td><td>2025-07</td></tr><tr><td>11</td><td><strong>GongZhongHao_MCP</strong></td><td>github.com/yikaikkk/GongZhongHao_MCP</td><td>Go</td><td>2025-10</td></tr></tbody></table>
+<h3 id="c-类多平台同步--agent-skill--cli">C 类：多平台同步 / Agent Skill / CLI</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>#</th><th>项目名</th><th>Repo</th><th>类型</th><th>最近更新</th></tr></thead><tbody><tr><td>12</td><td><strong>Wechatsync</strong></td><td>github.com/wechatsync/Wechatsync</td><td>浏览器扩展 + CLI + MCP</td><td>2026-05</td></tr><tr><td>13</td><td><strong>md2wechat-skill</strong></td><td>github.com/geekjourneyx/md2wechat-skill</td><td>CLI + Agent Skill</td><td>2026-07</td></tr><tr><td>14</td><td><strong>md2wechat-lite</strong></td><td>github.com/geekjourneyx/md2wechat-lite</td><td>CLI</td><td>2026-02</td></tr></tbody></table>
+<blockquote>
+<p><strong>特别说明</strong>：⑬ md2wechat-skill 虽列在 C 类，但实际能力远超 CLI 工具定位——它同时具备排版（48 专业主题 + 60 项排版语法）、发草稿、AI 配图、多账号管理、小绿书等能力，是 14 个项目中功能覆盖面最广的。之所以单列，是因为它不是传统 MCP Server（stdio/http 协议），而是面向 AI Agent 的 CLI 工具（JSON 契约），集成方式不同。详见第四章专项分析。</p>
+</blockquote>
+<p>Gitee 上有文颜 MCP 的两个镜像（lfslfs/WXgzh-mcp 和 li_jian-Lee/WXgzh-mcp），均为 fork，不单独评测。</p>
+<hr>
+<h2 id="三功能矩阵谁有什么">三、功能矩阵：谁有什么</h2>
+<p>把 11 个核心 MCP Server 和 md2wechat-skill 放进一张功能矩阵，横向对比：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>功能维度</th><th>①文颜</th><th>②md2wechat</th><th>③夏颜</th><th>⑤md2wechat-go</th><th>⑥woa-mcp</th><th>⑦oukanghua</th><th>⑧kakaxi</th><th>⑩publisher</th><th>⑬md2wechat-skill</th></tr></thead><tbody><tr><td><strong>主题排版</strong></td><td>7套+自定义</td><td>7套(同文颜)</td><td>8套+自定义</td><td>4套</td><td>❌</td><td>❌</td><td>❌</td><td>基础HTML</td><td><strong>48套+60项语法</strong></td></tr><tr><td><strong>Mermaid图表</strong></td><td>✅</td><td>✅+手绘风格</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>未明确</td></tr><tr><td><strong>代码高亮</strong></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>未明确</td></tr><tr><td><strong>发草稿</strong></td><td>✅</td><td>✅</td><td>✅</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td><td>✅(直接发布)</td><td>✅</td></tr><tr><td><strong>草稿查询</strong></td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr><tr><td><strong>草稿删除</strong></td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr><tr><td><strong>草稿更新</strong></td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr><tr><td><strong>正式发布</strong></td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅ submit</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td></tr><tr><td><strong>素材上传</strong></td><td>✅ 图片</td><td>✅+COS</td><td>✅ 临时/永久</td><td>❌</td><td>✅ 临时/永久</td><td>✅ 临时/永久</td><td>❌</td><td>✅ 封面</td><td>✅ 图片</td></tr><tr><td><strong>素材管理</strong></td><td>❌</td><td>❌</td><td>✅ CRUD</td><td>❌</td><td>✅ CRUD</td><td>✅ CRUD</td><td>✅ 删除</td><td>❌</td><td>❌</td></tr><tr><td><strong>封面图自动生成</strong></td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅ 智能配色</td><td>✅ <strong>AI配图</strong></td></tr><tr><td><strong>小绿书(图片消息)</strong></td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr><tr><td><strong>多公众号</strong></td><td>✅ Server模式</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr><tr><td><strong>远程Server(绕IP白名单)</strong></td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅ 固定出口IP</td></tr><tr><td><strong>Agent原生设计</strong></td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅ <strong>6+Agent平台</strong></td></tr><tr><td><strong>批量发布</strong></td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr><tr><td><strong>Brand Profile</strong></td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr><tr><td><strong>预览/检查</strong></td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅ 预览</td><td>✅ <strong>inspect</strong></td></tr><tr><td><strong>Docker</strong></td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td><td>静态二进制</td></tr><tr><td><strong>开源协议</strong></td><td>Apache-2.0</td><td>Apache-2.0</td><td>Apache-2.0</td><td>MIT</td><td>MIT</td><td>未标注</td><td>未标注</td><td>未标注</td><td><strong>BUSL-1.1</strong></td></tr></tbody></table>
+<blockquote>
+<p>注：④floodsung、⑨tc6-01、⑪GZH_MCP 因功能基础或不成熟，从矩阵中移除以节省篇幅。⑬md2wechat-skill 的免费模式仅含 3 个基础主题，48 个专业主题需 API/专业模式。</p>
+</blockquote>
+<p><strong>一句话总结这张表：⑬md2wechat-skill 排版能力最强（48 主题 + AI 配图 + Agent 原生），但许可证非开源、免费版主题少、无草稿管理。文颜 + woa-mcp 组合则是开源生态下覆盖面最广的方案。</strong></p>
+<hr>
+<h2 id="四关键项目逐一拆解">四、关键项目逐一拆解</h2>
+<h3 id="排版之王文颜-mcp">排版之王：文颜 MCP（①）</h3>
+<p>1.3k star，社区最活跃，功能最全的排版 MCP。7+ 主题 + 自定义 CSS、Mermaid 转图、小绿书、远程 Server 模式（绕 IP 白名单）、多公众号管理、Docker 部署。</p>
+<p><strong>短板致命</strong>：只能 Create 草稿，不能查、改、删；不能正式发布；没有素材 CRUD。也就是说，发完草稿之后的所有管理操作都得去公众号后台手动做。</p>
+<h3 id="mermaid-增强markdown2wechat">Mermaid 增强：markdown2wechat（②）</h3>
+<p>在文颜基础上 fork，增加了 Mermaid→图片自动转换（含手绘风格）和腾讯云 COS 图床。思路好，但依赖重（puppeteer/Chrome/sharp），Windows 安装容易踩坑。同样没有草稿 CRUD 和发布。</p>
+<h3 id="python-生态夏颜-mcp">Python 生态：夏颜 MCP（③）</h3>
+<p>Python 实现，10 个 MCP 工具，有主题预览、自定义主题 CRUD、素材 CRUD。8 套主题。社区小，无 Mermaid，无正式发布。如果你更习惯 Python 生态，这是 A 类里唯一有素材管理的。</p>
+<h3 id="api-管理之王wechat-official-account-mcp">API 管理之王：wechat-official-account-mcp（⑥）</h3>
+<p>TypeScript，MIT 协议。草稿 Create/Read/Delete、正式发布（submit）、素材 CRUD、SQLite 本地存储、AES 加密敏感字段、日志脱敏。功能完整度在 B 类里最高。</p>
+<p><strong>短板同样致命</strong>：完全没有排版/主题系统，发的是原始 HTML，文章在公众号里显示就是一坨没有样式的文字。</p>
+<h3 id="全家桶oukanghuawechat_official_account_mcp">全家桶：oukanghua/wechat_official_account_mcp（⑦）</h3>
+<p>FastMCP 2.0，功能最多：草稿 CRUD + 发布 + 状态查询 + AI 聊天 + 静态网页生成 + S3 存储 + Docker。但功能多而杂，Python 依赖重，同样没有排版。</p>
+<h3 id="封面自动生成wechat-publisher-mcp">封面自动生成：wechat-publisher-mcp（⑩）</h3>
+<p>唯一有封面图自动生成（智能配色 PNG）和预览模式（发预览给指定 OpenID）的项目。还能查发布后数据（阅读/点赞/评论/分享）。但无草稿管理、无素材管理、无主题排版。</p>
+<h3 id="精简安全kakaxiwechat_oa_api_mcp">精简安全：kakaxi/wechat_oa_api_mcp（⑧）</h3>
+<p>5 个工具精简，内置限流和 Token 缓存。安全性考虑多。但无排版、无素材上传，功能最少。</p>
+<h3 id="不推荐的gongzhonghao_mcp">不推荐的：⑪GongZhongHao_MCP</h3>
+<p>作者自述”功能未完全测试”，3 次提交，不成熟。</p>
+<h3 id="全能选手md2wechat-skill">全能选手：md2wechat-skill（⑬）</h3>
+<p>Go 实现，274 次提交，2026 年 7 月仍在活跃更新。是 14 个项目中功能覆盖面最广的：48 个专业主题 + 60 项排版语法（<code>:::module</code> 系列）、AI 配图（封面 + 信息图，支持多 provider）、发草稿、多账号管理、小绿书、批量发布、Brand Profile（长期风格记忆）、inspect 发布前检查。</p>
+<p>最大亮点是<strong>Agent 原生设计</strong>——不是通用工具改成 Agent 能用，而是从头为 Agent 调用优化的 CLI：JSON 单行紧凑输出、固定命令边界、6+ Agent 平台兼容（Claude Code、Codex、WorkBuddy、Kimi Work 等），还有专门的 WORKBUDDY.md 集成文档。</p>
+<p><strong>短板需要正视</strong>：</p>
+<ol>
+<li><strong>许可证 BUSL-1.1</strong>（Source Available，非开源）——个人/学习/非营利免费，商业使用需授权。与文颜(Apache-2.0)、woa-mcp(MIT) 的完全开源不同。</li>
+<li><strong>免费模式主题少</strong>——免费 AI 模式仅 3 个基础主题，且不直接返回 HTML（需外部 LLM 处理）；48 个专业主题需 API/专业模式。</li>
+<li><strong>无草稿管理</strong>——和文颜一样只能 Create，不能查/改/删草稿。</li>
+<li><strong>无正式发布</strong>——只发草稿，不能 submit 到公开。</li>
+<li>Mermaid 和代码高亮未在 README 中明确说明。</li>
+</ol>
+<hr>
+<h2 id="五实测开发过程从踩坑到封装-skill">五、实测开发过程：从踩坑到封装 Skill</h2>
+<p>在对比过程中，我实际安装了 3 个 MCP Server 并测试：</p>
+<h3 id="51-安装与配置">5.1 安装与配置</h3>
+<p>通过 <code>~/.workbuddy/.mcp.json</code> 配置了三个 Server：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "wenyan-mcp"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"npx"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"-y"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"wenyan-mcp"</span><span style="color:#E1E4E8">] },</span></span>
+<span class="line"><span style="color:#79B8FF">    "wechat-official-account-mcp"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"npx"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"-y"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"@anthropic/wechat-official-account-mcp"</span><span style="color:#E1E4E8">] },</span></span>
+<span class="line"><span style="color:#79B8FF">    "markdown2wechat"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"./markdown2wechat-mcp/dist/index.js"</span><span style="color:#E1E4E8">] }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="52-实测发现的坑">5.2 实测发现的坑</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>坑</th><th>项目</th><th>原因</th><th>解决</th></tr></thead><tbody><tr><td>IP 白名单 40164</td><td>所有项目</td><td>服务器出口 IP 不在白名单</td><td><code>curl ifconfig.me</code> 查出口 IP，加入白名单</td></tr><tr><td>未认证订阅号 48001</td><td>woa-mcp</td><td><code>freepublish</code>（发布到公开）需要认证</td><td>改用 <code>draft/add</code>，只发草稿</td></tr><tr><td>marked v15 兼容</td><td>自己写的脚本</td><td><code>marked.parse()</code> 返回 <code>[object Object]</code></td><td>检测输出，abort 并提示</td></tr><tr><td>微信不支持 <code>&#x3C;style></code></td><td>所有项目</td><td>只接受内联样式</td><td>用正则后处理，给每个标签加 <code>style=""</code></td></tr><tr><td>文章正文图片</td><td>自己写的脚本</td><td>本地图片路径微信无法访问</td><td>需先调 <code>uploadimg</code> API 上传获取微信 URL</td></tr><tr><td>Node.js inline 脚本语法</td><td>自己写的脚本</td><td><code>data += chunk</code> 缺分号导致解析错误</td><td>改为 <code>(chunk) => { data += chunk; }</code></td></tr></tbody></table>
+<h3 id="53-从脚本到-skill-的封装">5.3 从脚本到 Skill 的封装</h3>
+<p>踩完坑后，我把完整流程封装成了一个可复用的 Skill（<code>wechat-draft-publisher</code>），核心是一个参数化 Node.js 脚本 <code>publish_draft.js</code>，流程：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>读取 Markdown → marked 转 HTML → 正则后处理加内联样式 → </span></span>
+<span class="line"><span>（可选）生成占位封面 PNG → 获取 access_token → </span></span>
+<span class="line"><span>上传封面素材获取 media_id → 创建草稿 → 完成</span></span></code></pre>
+<p>脚本支持以下参数，全部命令行传入，不再硬编码：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>参数</th><th>说明</th></tr></thead><tbody><tr><td><code>--article</code></td><td>Markdown 文件路径</td></tr><tr><td><code>--title</code></td><td>文章标题</td></tr><tr><td><code>--author</code></td><td>作者名</td></tr><tr><td><code>--digest</code></td><td>摘要（不传自动截取前 120 字）</td></tr><tr><td><code>--cover</code></td><td>封面图路径（不传生成纯色占位图）</td></tr><tr><td><code>--appid</code> / <code>--secret</code></td><td>凭证（或从环境变量/mcp.json 读取）</td></tr><tr><td><code>--dry-run</code></td><td>只转 HTML 不调 API</td></tr><tr><td><code>--output</code></td><td>HTML 输出到文件</td></tr></tbody></table>
+<p><strong>关键设计决策：</strong></p>
+<ol>
+<li><strong>零外部依赖渲染封面</strong>：占位封面用纯 Node.js Buffer 手写 PNG 编码（zlib + CRC32），不依赖 sharp/canvas，避免安装问题。</li>
+<li><strong>内联 CSS 用正则后处理</strong>：不引入复杂排版引擎，<code>marked.parse()</code> 输出标准 HTML 后，用正则给每个标签注入 <code>style</code> 属性。样式参考文颜默认主题调色。</li>
+<li><strong>dry-run 模式</strong>：先看 HTML 效果再决定是否调 API，避免浪费 API 调用配额。</li>
+<li><strong>凭证读取优先级</strong>：命令行参数 > 环境变量 > <code>~/.workbuddy/.mcp.json</code>。这样在 AI 助手对话里可以自动从配置文件读取，不用每次手动输入。</li>
+</ol>
+<h3 id="54-skill-验证">5.4 Skill 验证</h3>
+<p>用 <code>--dry-run</code> 模式跑了一篇真实文章（3000 字深度分析），输出 HTML 检查无误：标题/正文/引用/表格/代码块/列表全部正确添加内联样式，无 <code>[object Object]</code>，无乱码。</p>
+<hr>
+<h2 id="六现有-mcp-的核心短板汇总">六、现有 MCP 的核心短板汇总</h2>
+<p>把 14 个项目的不足归为五类，这也是新 MCP 需要弥补的：</p>
+<h3 id="短板-1排版与-api-割裂">短板 1：排版与 API 割裂</h3>
+<p>最大的问题。A 类（文颜系）排版强但 API 弱，B 类（woa-mcp 系）API 强但排版为零。用户要么装两个 Server 拼着用，要么忍受没排版的文章。</p>
+<h3 id="短板-2草稿管理不完整">短板 2：草稿管理不完整</h3>
+<p>大部分项目只支持 Create（发草稿），不支持 Read/Update/Delete。发完之后想改标题、删旧稿、查列表——得去公众号后台手动操作。只有 woa-mcp（⑥）和 oukanghua（⑦）支持 C/R/D，但都不支持 Update。</p>
+<h3 id="短板-3正文图片上传缺失">短板 3：正文图片上传缺失</h3>
+<p>文章正文中的本地图片需要先通过 <code>uploadimg</code> API 上传获取微信 URL，再替换 Markdown 中的图片路径。<strong>14 个项目中，没有一个自动处理这个流程。</strong> 文颜和 markdown2wechat 支持上传图片，但需要手动调用；大部分 B 类项目完全不支持。</p>
+<h3 id="短板-4token-管理粗糙">短板 4：Token 管理粗糙</h3>
+<p>access_token 有效期 2 小时，大部分项目每次调用都重新获取，没有缓存。频繁调用容易触发微信限频（45009）。只有 kakaxi（⑧）做了 Token 缓存 + 限流。</p>
+<h3 id="短板-5windows-兼容性">短板 5：Windows 兼容性</h3>
+<p>markdown2wechat 依赖 puppeteer/Chrome/sharp，在 Windows 上安装容易踩坑（Chrome 路径、sharp 原生模块编译）。文颜 MCP 纯 TypeScript 没这个问题，但也 fork 出了 floodsung 版修复 FormData 兼容问题——说明跨平台稳定性还需要关注。</p>
+<hr>
+<h2 id="七5-个活跃项目与实用推荐">七、5 个活跃项目与实用推荐</h2>
+<h3 id="近期仍在维护的-5-个项目">近期仍在维护的 5 个项目</h3>
+<p>14 个项目中，最近 3 个月（2026 年 4 月以后）仍在更新的只有 <strong>5 个</strong>：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>项目</th><th>Repo 地址</th><th>最近更新</th><th>核心能力</th><th>协议</th></tr></thead><tbody><tr><td><strong>文颜 MCP</strong></td><td>github.com/caol64/wenyan-mcp</td><td>2026-04</td><td>7+ 主题、Mermaid、代码高亮、发草稿、小绿书、远程 Server</td><td>Apache-2.0</td></tr><tr><td><strong>woa-mcp</strong></td><td>github.com/xwang152-jack/wechat-official-account-mcp</td><td>2026-05</td><td>草稿 C/R/D、正式发布、素材 CRUD、AES 加密</td><td>MIT</td></tr><tr><td><strong>oukanghua</strong></td><td>github.com/oukanghua/wechat_official_account_mcp</td><td>2026-05</td><td>草稿 CRUD、发布、素材 CRUD、状态查询、Docker</td><td>未标注</td></tr><tr><td><strong>Wechatsync</strong></td><td>github.com/wechatsync/Wechatsync</td><td>2026-05</td><td>多平台一键同步（微信+知乎+掘金+简书等）</td><td>开源</td></tr><tr><td><strong>md2wechat-skill</strong></td><td>github.com/geekjourneyx/md2wechat-skill</td><td>2026-07</td><td><strong>48 主题、60 项排版语法、AI 配图、Agent 原生、多账号、批量发布</strong></td><td>BUSL-1.1</td></tr></tbody></table>
+<p>其余 9 个项目更新停滞在 2026 年 2 月或更早，部分已超半年未更新，不建议作为主力工具。</p>
+<h3 id="已知短板">已知短板</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>短板</th><th>影响</th><th>变通方案</th></tr></thead><tbody><tr><td>排版与 API 割裂</td><td>排版派不管 API，API 派不排版</td><td>文颜 + woa-mcp 双装，或 md2wechat-skill + woa-mcp</td></tr><tr><td>草稿不支持 Update</td><td>无法修改已有草稿内容</td><td>删旧稿重新发</td></tr><tr><td>正文图片不自动上传</td><td>本地图片需手动处理</td><td>先上传图床，替换 Markdown 中的 URL</td></tr><tr><td>md2wechat-skill 免费版主题少</td><td>免费模式仅 3 主题，48 主题需 API 模式</td><td>用文颜替代，或升级 API 模式</td></tr><tr><td>md2wechat-skill 不可商用</td><td>BUSL-1.1 协议，商业使用需授权</td><td>商业场景用文颜(Apache-2.0) + woa-mcp(MIT)</td></tr></tbody></table>
+<h3 id="推荐方案">推荐方案</h3>
+<p><strong>方案一：文颜 MCP + woa-mcp（双装，开源首选，覆盖 95% 场景）</strong></p>
+<p>文颜负责排版 + 发草稿，woa-mcp 负责草稿查询/删除、正式发布、素材管理。两个都是 TypeScript，<code>npx</code> 直接装，5 分钟搞定。完全开源，商业使用无限制。</p>
+<ul>
+<li>文颜 MCP：github.com/caol64/wenyan-mcp</li>
+<li>woa-mcp：github.com/xwang152-jack/wechat-official-account-mcp</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "wenyan-mcp"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"npx"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"-y"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"wenyan-mcp"</span><span style="color:#E1E4E8">] },</span></span>
+<span class="line"><span style="color:#79B8FF">    "wechat-official-account-mcp"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"npx"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"-y"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"@anthropic/wechat-official-account-mcp"</span><span style="color:#E1E4E8">] }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><strong>方案二：md2wechat-skill（单装，Agent 原生，排版最强）</strong></p>
+<p>如果你用 WorkBuddy、Claude Code 等 AI Agent 辅助写作，且是个人/非营利使用，md2wechat-skill 是体验最好的单一工具：48 主题 + AI 配图 + Brand Profile + Agent 原生 JSON 契约。npm 一行安装，<code>inspect → preview → convert</code> 三步流程清晰。</p>
+<ul>
+<li>Repo：github.com/geekjourneyx/md2wechat-skill</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> -g</span><span style="color:#9ECBFF"> @geekjourneyx/md2wechat</span></span></code></pre>
+<p>需要草稿管理/正式发布时，加装 woa-mcp 即可。注意 BUSL-1.1 协议：个人免费，商业使用需授权。</p>
+<p><strong>不推荐安装的</strong>：GongZhongHao_MCP（功能未完全测试）、md2wechat-mcp-server（不发布只转换）、tc6-01/weixin-mcp（1 次提交）、kakaxi（8 个月未更新）、publisher-mcp（1 年未更新）。</p>
+<hr>
+<h2 id="八总结">八、总结</h2>
+<p>14 个项目里，真正值得装的只有 5 个活跃项目。选两个组合使用，就能覆盖绝大多数场景：</p>
+<ul>
+<li><strong>开源免费、商业无忧</strong>：文颜 MCP + woa-mcp（排版 + API 全功能）</li>
+<li><strong>Agent 原生、排版最强</strong>：md2wechat-skill + woa-mcp（48 主题 + AI 配图 + 草稿管理）</li>
+</ul>
+<p>没必要造新轮子。真正的硬缺口只有正文图片自动上传和草稿 Update 两个，属于边缘需求。选两个活跃项目组合使用，就是目前最好用的方案。</p>
+<hr>
+<p><em>本文基于 2026 年 7 月的实际调研和开发体验撰写。项目更新频繁，建议在选型前到各 repo 确认最新状态。</em></p>  </article>  </div> <button id="back-to-top" type="button" aria-label="回到顶部" title="回到顶部" data-astro-cid-37fxchfa>↑</button> <script type="module">const o=document.getElementById("back-to-top"),t=()=>{const e=window.scrollY>400;o.classList.toggle("visible",e)};window.addEventListener("scroll",t,{passive:!0});t();o.addEventListener("click",()=>{window.scrollTo({top:0,behavior:"smooth"})});</script> </body>  </html> 

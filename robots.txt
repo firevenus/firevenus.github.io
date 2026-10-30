@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# AI 友好：允许抓取 RSS / llms.txt / sitemap
+Sitemap: https://firevenus.github.io/sitemap-index.xml
