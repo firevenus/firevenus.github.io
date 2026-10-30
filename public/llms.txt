@@ -13,6 +13,7 @@
 - [Sitemap](https://firevenus.github.io/sitemap-index.xml)：全站 URL 清单
 - [权重实验室](https://firevenus.github.io/juyi-weight-lab/)：中国 100 城宜居指数交互工具（7 维度权重可调）
 - [晨间信息流](https://firevenus.github.io/morning/)：每日 07:00 自动更新的多源新闻晨报（全球/AI/游戏/加密/中文快讯）
+- [AI 学习路线](https://firevenus.github.io/learn/)：12 周 AI 学习路线，按优先级（P0/P1/P2）排序的课程、文档与工具清单
 
 ## 博客文章
 

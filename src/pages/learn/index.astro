@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import data from '../../data/learn.json';
+
+const priorityOrder = ['P0', 'P1', 'P2'];
+const stageOrder = ['M0', 'M1', 'M2', 'M3'];
+const groups = priorityOrder.map((p) => ({
+  p,
+  desc: data.priorities[p],
+  items: data.resources
+    .filter((r) => r.p === p)
+    .sort((a, b) => stageOrder.indexOf(a.stage) - stageOrder.indexOf(b.stage)),
+}));
+const total = data.resources.length;
+---
+
+<BaseLayout title="AI 学习路线" description="AI × 游戏开发 12 周学习路线：按优先级排序的课程、文档与工具清单">
+  <header class="learn-header">
+    <h1>AI 学习路线</h1>
+    <p class="sub">从听懂原理到能教别人 · 12 周 · 每周 4-6 小时</p>
+    <p class="meta">共 {total} 项资源 · 链接核实于 {data.updated} · 已完成 <span id="done-count">0</span> / {total}</p>
+  </header>
+
+  <section class="stages">
+    {stageOrder.map((s) => (
+      <div class="stage">
+        <div class="stage-tag">{s}</div>
+        <div class="stage-name">{data.stages[s].name}</div>
+        <div class="stage-weeks">{data.stages[s].weeks}</div>
+        <div class="stage-goal">{data.stages[s].goal}</div>
+      </div>
+    ))}
+  </section>
+
+  <p class="legend">🌐 = 国内需开代理　⚖️ = 用于商用素材前先读授权条款　勾选框只保存在本机浏览器</p>
+
+  {groups.map((g) => (
+    <section class="group">
+      <h2><span class={`badge ${g.p}`}>{g.p}</span>{g.desc}</h2>
+      <ol class="items">
+        {g.items.map((r) => (
+          <li class="item">
+            <input type="checkbox" class="done" data-id={r.url} aria-label={`标记已完成：${r.title}`} />
+            <div class="body">
+              <div class="title-row">
+                <span class="stage-chip">{r.stage}</span>
+                <a href={r.url} target="_blank" rel="noopener">{r.title}</a>
+                {r.proxy && <span title="国内需开代理">🌐</span>}
+                {r.license && <span title="商用前先读授权条款">⚖️</span>}
+              </div>
+              <div class="note">{r.note} · {r.lang} · {r.length}</div>
+              {r.alt && <div class="note"><a href={r.alt.url} target="_blank" rel="noopener">{r.alt.label}</a></div>}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+  ))}
+
+  <p class="footer-note">本页由 AI 辅助整理。</p>
+</BaseLayout>
+
+<script>
+  const KEY = 'learn-progress-v1';
+  const saved = new Set(JSON.parse(localStorage.getItem(KEY) || '[]'));
+  const boxes = document.querySelectorAll<HTMLInputElement>('input.done');
+  const counter = document.getElementById('done-count')!;
+  const refresh = () => {
+    counter.textContent = String(saved.size);
+    boxes.forEach((b) => b.closest('.item')!.classList.toggle('is-done', b.checked));
+  };
+  boxes.forEach((b) => {
+    b.checked = saved.has(b.dataset.id!);
+    b.addEventListener('change', () => {
+      b.checked ? saved.add(b.dataset.id!) : saved.delete(b.dataset.id!);
+      localStorage.setItem(KEY, JSON.stringify([...saved]));
+      refresh();
+    });
+  });
+  refresh();
+</script>
+
+<style>
+  .learn-header { text-align: left; padding: 40px 0 24px; border-bottom: 1px solid var(--hr); margin-bottom: 28px; }
+  .learn-header h1 { font-size: 2em; font-weight: 800; color: #111; margin-bottom: 8px; }
+  .sub { color: #444; margin: 0 0 4px; text-align: left; }
+  .meta { color: #888; font-size: 0.9em; margin: 0; text-align: left; }
+
+  .stages { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .stage { background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px; text-align: left; }
+  .stage-tag { font-weight: 800; color: #2563eb; }
+  .stage-name { font-weight: 700; color: #111; }
+  .stage-weeks { color: #888; font-size: 0.85em; }
+  .stage-goal { color: #555; font-size: 0.88em; margin-top: 4px; }
+
+  .legend { color: #666; font-size: 0.85em; text-align: left; margin-bottom: 8px; }
+
+  .group h2 { display: flex; align-items: center; gap: 10px; font-size: 1.15em; margin: 32px 0 12px; border: none; padding: 0; text-align: left; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 6px; font-size: 0.85em; font-weight: 800; color: #fff; }
+  .badge.P0 { background: #dc2626; }
+  .badge.P1 { background: #d97706; }
+  .badge.P2 { background: #64748b; }
+
+  .items { list-style: none; padding: 0; margin: 0; }
+  .item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid #eee; text-align: left; }
+  .item input { margin-top: 7px; width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; }
+  .item.is-done .title-row a { color: #999; text-decoration: line-through; }
+  .title-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-weight: 600; }
+  .title-row a { color: #111; text-decoration: none; border-bottom: 1px solid #cbd5e1; }
+  .title-row a:hover { color: #2563eb; border-bottom-color: #2563eb; }
+  .stage-chip { font-size: 0.75em; font-weight: 700; color: #2563eb; background: #eff6ff; border-radius: 4px; padding: 1px 6px; }
+  .note { color: #666; font-size: 0.88em; margin-top: 2px; text-align: left; }
+  .note a { color: #2563eb; }
+  .footer-note { color: #999; font-size: 0.85em; margin-top: 40px; text-align: left; }
+
+  @media (max-width: 640px) {
+    .stages { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
