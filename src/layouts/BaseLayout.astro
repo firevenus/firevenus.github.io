@@ -4,9 +4,10 @@ import '../styles/global.css';
 export interface Props {
   title: string;
   description?: string;
+  noindex?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, noindex = false } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -24,8 +25,19 @@ const { title, description } = Astro.props;
   <meta property="og:description" content={description || '游戏开发 · 技术笔记 · 产业观察'} />
   <meta property="og:url" content={Astro.url.origin + Astro.url.pathname} />
   <meta name="twitter:card" content="summary" />
+  {noindex && <meta name="robots" content="noindex,follow" />}
 </head>
 <body>
+  <nav class="topnav">
+    <a href="/" class="brand">奥尔特云</a>
+    <div class="topnav-links">
+      <a href="/desk/">工作台</a>
+      <a href="/morning/">晨报</a>
+      <a href="/learn/">学习</a>
+      <a href="/juyi-weight-lab/">权重实验室</a>
+      <a href="/rss.xml">RSS</a>
+    </div>
+  </nav>
   <div class="container">
     <slot />
   </div>
@@ -44,6 +56,36 @@ const { title, description } = Astro.props;
   </script>
 </body>
 <style>
+  .topnav {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 18px 24px 0;
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.86em;
+  }
+  .topnav .brand {
+    font-weight: 800;
+    color: #111;
+    letter-spacing: -0.01em;
+  }
+  .topnav .brand:hover,
+  .topnav-links a:hover {
+    color: #2563eb;
+    border-bottom-color: transparent;
+  }
+  .topnav-links {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .topnav-links a {
+    color: #6b7280;
+    font-weight: 500;
+  }
+
   #back-to-top {
     position: fixed;
     right: 24px;
@@ -73,6 +115,14 @@ const { title, description } = Astro.props;
     transform: translateY(0);
   }
   @media (max-width: 640px) {
+    .topnav {
+      padding: 14px 16px 0;
+      gap: 10px;
+      font-size: 0.8em;
+    }
+    .topnav-links {
+      gap: 12px;
+    }
     #back-to-top {
       right: 16px;
       bottom: 16px;

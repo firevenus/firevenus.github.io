@@ -1,0 +1,431 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+type Link = {
+  n: number;
+  name: string;
+  url: string;
+  desc: string;
+  mark: string;
+  color: string;
+  ext?: boolean;
+};
+
+const external: Link[] = [
+  { n: 1, name: 'YouTube', url: 'https://www.youtube.com/', desc: '订阅 · 稍后观看', mark: '▶', color: '#ff0033', ext: true },
+  { n: 2, name: 'Gmail', url: 'https://mail.google.com/mail/u/0/#inbox', desc: '收件箱 u/0', mark: '✉', color: '#d93025', ext: true },
+  { n: 3, name: 'LinkedIn', url: 'https://www.linkedin.com/feed/', desc: '动态 · 人脉', mark: 'in', color: '#0a66c2', ext: true },
+  { n: 4, name: 'X', url: 'https://x.com/home', desc: '时间线', mark: '𝕏', color: '#111111', ext: true },
+  { n: 5, name: 'GitHub', url: 'https://github.com/', desc: '仓库 · PR · Issues', mark: '⌥', color: '#24292f', ext: true },
+];
+
+const internal: Link[] = [
+  { n: 6, name: '晨间信息流', url: '/morning/', desc: '每日 07:00 自动更新', mark: '☕', color: '#b45309' },
+  { n: 7, name: '权重实验室', url: '/juyi-weight-lab/', desc: '7 维度 · 100 城排名', mark: '🔬', color: '#2563eb' },
+  { n: 8, name: 'AI 学习路线', url: '/learn/', desc: '12 周 · 可勾选进度', mark: '📚', color: '#7c3aed' },
+  { n: 9, name: '文章归档', url: '/', desc: '奥尔特云全部文章', mark: '✎', color: '#0f766e' },
+];
+---
+
+<BaseLayout title="工作台" description="每日启动页：常用站点一站直达" noindex={true}>
+  <header class="desk-head">
+    <h1>工作台</h1>
+    <p class="sub">每天要开的站点，一页收齐。<kbd>1</kbd>–<kbd>9</kbd> 直接跳转，<kbd>Shift</kbd> + 数字 新标签打开。</p>
+    <div class="head-actions">
+      <button id="open-all" type="button" class="btn-primary">一键打开 5 个常用站</button>
+      <a href="#setup" class="btn-ghost">设为浏览器启动页 →</a>
+    </div>
+    <p id="hint" class="hint" hidden></p>
+  </header>
+
+  <section class="group">
+    <h2>常用站点<span class="count">5</span></h2>
+    <div class="grid ext">
+      {external.map((l) => (
+        <a href={l.url} target="_blank" rel="noopener noreferrer" class="card" data-ext data-key={l.n}>
+          <span class="mark" style={`color:${l.color}`}>{l.mark}</span>
+          <span class="meta">
+            <strong>{l.name}</strong>
+            <em>{l.desc}</em>
+          </span>
+          <span class="num">{l.n}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="group">
+    <h2>站内入口<span class="count">4</span></h2>
+    <div class="grid">
+      {internal.map((l) => (
+        <a href={l.url} class="card" data-key={l.n}>
+          <span class="mark" style={`color:${l.color}`}>{l.mark}</span>
+          <span class="meta">
+            <strong>{l.name}</strong>
+            <em>{l.desc}</em>
+          </span>
+          <span class="num">{l.n}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="group">
+    <h2>GitHub 动态<span class="count live" id="gh-status">加载中</span></h2>
+    <ul id="gh-feed" class="feed">
+      <li class="skeleton">正在读取 github.com/firevenus 的公开活动…</li>
+    </ul>
+  </section>
+
+  <section class="group setup" id="setup">
+    <h2>让它真正省掉点击</h2>
+    <ol class="steps">
+      <li><strong>设为浏览器启动页</strong>：Chrome / Edge 设置 →「启动时」→ 打开特定网页 → 添加本页地址。开机即见，5 个站点就在眼前。</li>
+      <li><strong>允许本站弹窗</strong>：首次点「一键打开」若只开出一个标签，地址栏右侧点「弹窗已拦截」→ 始终允许本站，之后一次全开。</li>
+      <li><strong>固定到书签栏</strong>：把本页拖到书签栏，或按 <kbd>⌘</kbd>/<kbd>Ctrl</kbd> + <kbd>D</kbd>。</li>
+    </ol>
+    <p class="note">说明：Gmail / X / LinkedIn / YouTube 都在响应头里禁止被 iframe 嵌入（<code>X-Frame-Options</code>），且登录态绑定各自域名，因此无法在本站内「内嵌预览」——这正是做成本页导航而不是嵌入网页的原因。</p>
+  </section>
+</BaseLayout>
+
+<script>
+  const cards = Array.from(document.querySelectorAll('[data-key]'));
+  const hint = document.getElementById('hint');
+
+  document.addEventListener('keydown', (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target;
+    if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return;
+    const n = parseInt(e.key, 10);
+    if (!n || n < 1 || n > 9) return;
+    const card = cards.find((c) => c.dataset.key === String(n));
+    if (!card) return;
+    e.preventDefault();
+    const href = card.getAttribute('href') || '#';
+    if (card.hasAttribute('data-ext') || e.shiftKey) {
+      window.open(href, '_blank', 'noopener');
+    } else {
+      location.href = href;
+    }
+  });
+
+  document.getElementById('open-all')?.addEventListener('click', () => {
+    const links = Array.from(document.querySelectorAll('[data-ext]'));
+    let opened = 0;
+    links.forEach((a, i) => {
+      setTimeout(() => {
+        const w = window.open(a.href, '_blank');
+        if (w) {
+          w.opener = null;
+          opened += 1;
+        }
+        if (i === links.length - 1 && hint) {
+          hint.hidden = false;
+          hint.textContent =
+            opened >= links.length
+              ? '5 个标签页已打开。'
+              : `只打开了 ${opened} 个（其余被浏览器拦截）。点地址栏右侧的弹窗拦截图标 → 始终允许本站，再试一次。`;
+        }
+      }, i * 100);
+    });
+  });
+
+  const label = {
+    PushEvent: '提交',
+    CreateEvent: '新建',
+    PullRequestEvent: 'PR',
+    IssuesEvent: 'Issue',
+    WatchEvent: '收藏',
+    ForkEvent: 'Fork',
+    ReleaseEvent: '发布',
+    IssueCommentEvent: '评论',
+  };
+
+  const ago = (iso) => {
+    const s = (Date.now() - new Date(iso).getTime()) / 1000;
+    if (s < 3600) return `${Math.max(1, Math.round(s / 60))} 分钟前`;
+    if (s < 86400) return `${Math.round(s / 3600)} 小时前`;
+    return `${Math.round(s / 86400)} 天前`;
+  };
+
+  const status = document.getElementById('gh-status');
+  const feed = document.getElementById('gh-feed');
+
+  fetch('https://api.github.com/users/firevenus/events/public?per_page=20')
+    .then((r) => {
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    })
+    .then((events) => {
+      const items = events.filter((e) => label[e.type]).slice(0, 6);
+      if (!items.length) throw new Error('empty');
+      if (status) status.textContent = '实时';
+      if (feed) {
+        feed.innerHTML = items
+          .map((e) => {
+            const repo = (e.repo?.name || '').replace('firevenus/', '');
+            const detail =
+              e.type === 'PushEvent' && e.payload?.size ? ` · ${e.payload.size} 次提交` : '';
+            return `<li><span class="tag">${label[e.type]}</span><a href="https://github.com/${e.repo?.name}" target="_blank" rel="noopener noreferrer">${repo}</a><time>${ago(e.created_at)}${detail}</time></li>`;
+          })
+          .join('');
+      }
+    })
+    .catch(() => {
+      if (status) status.textContent = '离线';
+      if (feed)
+        feed.innerHTML =
+          '<li class="skeleton">暂时取不到活动数据（API 限流或网络问题）。<a href="https://github.com/firevenus" target="_blank" rel="noopener noreferrer">直接去 GitHub →</a></li>';
+    });
+</script>
+
+<style>
+  .desk-head {
+    padding: 56px 0 8px;
+    text-align: center;
+  }
+  .desk-head h1 {
+    font-size: 2.4em;
+    font-weight: 800;
+    color: #111;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+  .sub {
+    color: #666;
+    font-size: 0.95em;
+    margin: 0 auto 24px;
+    max-width: 520px;
+  }
+  .head-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn-primary,
+  .btn-ghost {
+    display: inline-block;
+    padding: 11px 24px;
+    border-radius: 8px;
+    font-size: 0.95em;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-primary {
+    background: #2563eb;
+    color: #fff;
+  }
+  .btn-primary:hover {
+    background: #1d4ed8;
+    border-bottom-color: transparent;
+  }
+  .btn-ghost {
+    background: #f1f5f9;
+    color: #333;
+  }
+  .btn-ghost:hover {
+    background: #e2e8f0;
+    border-bottom-color: transparent;
+  }
+  .hint {
+    margin-top: 14px;
+    font-size: 0.85em;
+    color: #b45309;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 8px 14px;
+    display: inline-block;
+  }
+  .hint[hidden] {
+    display: none;
+  }
+
+  .group {
+    margin-top: 44px;
+  }
+  .group h2 {
+    font-size: 1.05em;
+    font-weight: 700;
+    color: #111;
+    margin: 0 0 14px;
+    padding: 0 0 8px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .count {
+    font-size: 0.72em;
+    font-weight: 600;
+    color: #888;
+    background: #f1f5f9;
+    border-radius: 20px;
+    padding: 1px 8px;
+  }
+  .count.live {
+    color: #15803d;
+    background: #ecfdf5;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    color: inherit;
+    position: relative;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  }
+  .card:hover {
+    border-color: #2563eb;
+    box-shadow: 0 2px 12px rgba(37, 99, 235, 0.12);
+    transform: translateY(-1px);
+    border-bottom-color: #2563eb;
+  }
+  .mark {
+    font-size: 1.35em;
+    line-height: 1;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    font-weight: 700;
+  }
+  .meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .meta strong {
+    font-size: 0.98em;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.4;
+  }
+  .meta em {
+    font-style: normal;
+    font-size: 0.82em;
+    color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .num {
+    margin-left: auto;
+    font-size: 0.72em;
+    color: #b0b6c0;
+    border: 1px solid #e5e7eb;
+    border-radius: 5px;
+    padding: 0 6px;
+    line-height: 1.6;
+  }
+
+  .feed {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .feed li {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.9em;
+  }
+  .feed li:last-child {
+    border-bottom: none;
+  }
+  .feed .tag {
+    flex: 0 0 auto;
+    font-size: 0.78em;
+    color: #4b5563;
+    background: #f1f5f9;
+    border-radius: 5px;
+    padding: 1px 7px;
+  }
+  .feed a {
+    font-weight: 600;
+    color: #111;
+    border-bottom: none;
+  }
+  .feed a:hover {
+    color: #2563eb;
+  }
+  .feed time {
+    margin-left: auto;
+    color: #9ca3af;
+    font-size: 0.85em;
+    white-space: nowrap;
+  }
+  .feed .skeleton {
+    color: #9ca3af;
+    font-size: 0.88em;
+    display: block;
+  }
+
+  .steps {
+    margin: 0 0 14px;
+    padding-left: 22px;
+  }
+  .steps li {
+    margin: 10px 0;
+    font-size: 0.92em;
+    color: #444;
+    line-height: 1.7;
+  }
+  .note {
+    font-size: 0.84em;
+    color: #777;
+    background: #f8fafc;
+    border-left: 3px solid #cbd5e1;
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin: 0;
+  }
+  kbd {
+    font-family: inherit;
+    font-size: 0.82em;
+    background: #fff;
+    border: 1px solid #d7dce3;
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    padding: 1px 6px;
+    color: #444;
+  }
+
+  @media (max-width: 640px) {
+    .desk-head {
+      padding: 36px 0 4px;
+    }
+    .desk-head h1 {
+      font-size: 1.8em;
+    }
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .feed li {
+      flex-wrap: wrap;
+    }
+    .feed time {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+</style>

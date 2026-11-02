@@ -29,15 +29,33 @@ jobs:
 
       - run: npm run build
 
+      - name: Verify build output
+        run: test -f dist/index.html
+
       # 部署：构建产物推送到 gh-pages 分支（GitHub Pages 配置为 legacy: 从分支发布）
+      #
+      # 两个坑，别改回去：
+      # 1) 不能只靠 `git rm -rf .` —— 它会连 .gitignore 一起删掉，之后 `git add -A`
+      #    就会把 node_modules 全提交进 gh-pages（之前的分支就是这么被污染的）。
+      # 2) `git clean -fdx` 必须在 dist 挪走之后执行，否则构建产物会被当未跟踪文件删掉。
       - name: Deploy to gh-pages branch
         run: |
+          set -e
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          rm -rf /tmp/site-dist
+          cp -R dist /tmp/site-dist
+
           git checkout --orphan gh-pages
           git rm -rf . >/dev/null 2>&1 || true
-          cp -r dist/* .
+          git clean -fdx >/dev/null 2>&1 || true
+
+          cp -R /tmp/site-dist/. .
           touch .nojekyll
+
           git add -A
           git commit -m "deploy: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           git push --force origin gh-pages
+
+          echo "gh-pages 文件数：$(git ls-files | wc -l)"

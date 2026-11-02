@@ -3,4 +3,10 @@ dist/
 .astro/
 .DS_Store
 *.log
+*.tgz
+
+# 本机沙箱残包修补工具（仅供本机排障用，不入库）
+scripts/check-node-modules.mjs
+scripts/extract-tgz.mjs
+scripts/repair-loop.sh
 
