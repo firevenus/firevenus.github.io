@@ -7,13 +7,16 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+  administration: write   # configure-pages(enablement) 需要，用于自动把 Pages 源切到 Actions 模式
 
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,13 +35,18 @@ jobs:
       - name: Verify build output
         run: test -f dist/index.html
 
-      # 部署：构建产物推送到 gh-pages 分支（GitHub Pages 配置为 legacy: 从分支发布）
-      #
+      # Actions 模式部署用的产物包
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      # 兜底：legacy 分支模式（仓库 Settings 还没切到 Actions 模式时仍然生效）。
       # 两个坑，别改回去：
       # 1) 不能只靠 `git rm -rf .` —— 它会连 .gitignore 一起删掉，之后 `git add -A`
-      #    就会把 node_modules 全提交进 gh-pages（之前的分支就是这么被污染的）。
+      #    就会把 node_modules 全提交进 gh-pages（2026-10 之前分支一直被这样污染）。
       # 2) `git clean -fdx` 必须在 dist 挪走之后执行，否则构建产物会被当未跟踪文件删掉。
-      - name: Deploy to gh-pages branch
+      - name: Deploy to gh-pages branch (legacy fallback)
         run: |
           set -e
           git config user.name "github-actions[bot]"
@@ -58,4 +66,22 @@ jobs:
           git commit -m "deploy: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           git push --force origin gh-pages
 
-          echo "gh-pages 文件数：$(git ls-files | wc -l)"
+  # Actions 模式部署：完全替换线上产物，能清掉 legacy 模式残留的 2020 年旧文件。
+  # 仓库还没切到 Actions 模式时这两步会失败，continue-on-error 保证流水线不红；
+  # 切换成功后这里就是唯一的正式部署。
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Enable Pages (Actions mode)
+        uses: actions/configure-pages@v5
+        continue-on-error: true
+        with:
+          enablement: true
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        continue-on-error: true

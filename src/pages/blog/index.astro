@@ -1,0 +1,73 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = await getCollection('blog');
+posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout title="文章">
+  <header class="page-head">
+    <h1>文章</h1>
+    <p>游戏开发 · 技术笔记 · 产业观察</p>
+  </header>
+  <section class="list">
+    {posts.map((post) => (
+      <a href={`/blog/${post.slug}`} class="post-card">
+        <h3>{post.data.title}</h3>
+        <time datetime={post.data.date.toISOString()}>
+          {post.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+        </time>
+        {post.data.description && <p>{post.data.description}</p>}
+      </a>
+    ))}
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head {
+    text-align: center;
+    padding: 60px 0 30px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 30px;
+  }
+  .page-head h1 {
+    font-size: 2.2em;
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 8px;
+  }
+  .page-head p {
+    color: #888;
+  }
+  .list {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+  .post-card {
+    display: block;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+    text-decoration: none;
+    color: inherit;
+  }
+  .post-card:hover h3 {
+    color: #2563eb;
+  }
+  .post-card h3 {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 4px;
+  }
+  .post-card time {
+    color: #999;
+    font-size: 0.85em;
+  }
+  .post-card p {
+    color: #666;
+    font-size: 0.9em;
+    margin-top: 6px;
+  }
+</style>
