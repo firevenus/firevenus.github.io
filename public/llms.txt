@@ -17,9 +17,9 @@
 
 ## 博客文章
 
-- [10万块在100座城市能撑多久？我用AI做了个可视化工具](https://firevenus.github.io/blog/juyi-weight-lab/)：开源交互工具「居易指数·权重实验室」——7维度滑块实时调整，100城排名即时刷新
-- [想用AI写完文章之后直接发到微信，该怎么做？](https://firevenus.github.io/blog/mcp-wechat-publish/)：14个微信公众号 MCP Server 全景对比与选型建议
-- [Waiting on AI? Here Are the YouTube Channels I Actually Listen to](https://firevenus.github.io/blog/waiting-on-ai-youtube-channels/)：经核实的 YouTube 频道清单（活跃度验证）
+- [10万块在100座城市能撑多久？我用AI做了个可视化工具](https://firevenus.github.io/posts/juyi-weight-lab/)：开源交互工具「居易指数·权重实验室」——7维度滑块实时调整，100城排名即时刷新
+- [想用AI写完文章之后直接发到微信，该怎么做？](https://firevenus.github.io/posts/mcp-wechat-publish/)：14个微信公众号 MCP Server 全景对比与选型建议
+- [Waiting on AI? Here Are the YouTube Channels I Actually Listen to](https://firevenus.github.io/posts/waiting-on-ai-youtube-channels/)：经核实的 YouTube 频道清单（活跃度验证）
 
 ## 数据规范
 

@@ -35,7 +35,7 @@ posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
       <h3>📚 AI 学习路线</h3>
       <p>12 周从原理到落地：按优先级排序的课程、文档与工具，可勾选进度。</p>
     </a>
-    <a href="/blog/mcp-wechat-publish" class="feature-card feature-link">
+    <a href="/posts/mcp-wechat-publish" class="feature-card feature-link">
       <h3>AI × 微信公众号</h3>
       <p>14个 MCP Server 全景对比，实测选型，从踩坑到封装 Skill 的完整复盘。</p>
     </a>
@@ -48,7 +48,7 @@ posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
   <section class="post-list">
     <h2>全部文章</h2>
     {posts.map((post) => (
-      <a href={`/blog/${post.slug}`} class="post-card">
+      <a href={`/posts/${post.slug}`} class="post-card">
         <h3>{post.data.title}</h3>
         <time datetime={post.data.date.toISOString()}>
           {post.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
