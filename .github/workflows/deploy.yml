@@ -9,7 +9,8 @@ permissions:
   contents: write
   pages: write
   id-token: write
-  administration: write   # configure-pages(enablement) 需要，用于自动把 Pages 源切到 Actions 模式
+  # 注意：GITHUB_TOKEN 不支持 administration: write（会导致整个 workflow 文件无效）。
+  # configure-pages 的 enablement 因此用不了，好在 Source 已在 Settings→Pages 手动切到 Actions 模式。
 
 concurrency:
   group: pages
