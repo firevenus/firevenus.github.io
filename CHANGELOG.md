@@ -1,5 +1,34 @@
 # 更新日志
 
+## 2026-11-07
+
+### 站点工程 — Astro 5 → 7 升级（依赖漏洞清零）
+
+#### 变更
+
+- **框架跨两级大版本**：`astro` 5.18.2 → **7.4.7**，打包器由 `vite` 6.4.5 → **8.3.6（Rolldown）**，未启用任何适配器，仍为纯静态输出
+- **配套包**：`@astrojs/rss` 4.0.19、`@astrojs/sitemap` 3.7.4（两者均已是当前最新版，无 peer 约束变化）
+- **内容集合迁移到 Content Layer**：`src/content/config.ts` → `src/content.config.ts`，改用 `glob({ pattern: '**/*.md', base: './src/content/blog' })` loader 加载文章
+- **Markdown 渲染 API**：`await post.render()` → `await render(post)`（`render` 从 `astro:content` 具名导入）
+- **文章标识字段**：`post.slug` → `post.id`，涉及 `src/pages/posts/index.astro`（列表链接）与 `src/pages/posts/[...slug].astro`（路由参数），URL 结构不变
+- **Node 版本约束**：新增 `.nvmrc`（`22`）与 `package.json` 的 `engines.node >= 22.23.4`（Astro 7 硬性要求）
+
+#### 修复
+
+- **依赖漏洞 5 → 0**：`npm audit` 归零，覆盖
+  - astro 的 AVIF 图片优化远程代码执行（GHSA-26w7-cxv4-gfx2，影响 `< 7.2.8`，**critical**）
+  - astro 多枚 XSS / SSRF 告警（如 GHSA-4g3v-8h47-v7g6 影响 `<= 7.0.9`）
+  - sharp / libvips CVE-2026-33327、CVE-2026-33328、CVE-2026-35590（**high**）
+  - zod 校验超大集合时内存耗尽（**high**）
+  - esbuild 开发服务器任意文件读取（**low**）
+
+#### 说明
+
+- Astro 6 起移除旧式 `src/content/` 内容集合写法，旧 `config.ts` 已删除，仅保留 `src/content/blog/` 文章目录
+- Zod 4 迁移**无需改动代码**：原 schema 仅使用 `string / date / array / optional / default`，Zod 4 全部兼容
+- 构建验证：8 个页面 + `rss.xml` + `sitemap-index.xml` 全部生成，文章路由、工作台「金融看板」分组均未受影响
+- 本地需 Node ≥ 22.23.4；Cloudflare Pages 通过 `.nvmrc` 读取版本，GitHub Actions 由 `setup-node: 22` 自动满足
+
 ## 2026-08-02 (v3)
 
 ### 居易指数 · 权重实验室 — 模型升级 v14

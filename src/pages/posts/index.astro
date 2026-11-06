@@ -13,7 +13,7 @@ posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
   </header>
   <section class="list">
     {posts.map((post) => (
-      <a href={`/posts/${post.slug}`} class="post-card">
+      <a href={`/posts/${post.id}`} class="post-card">
         <h3>{post.data.title}</h3>
         <time datetime={post.data.date.toISOString()}>
           {post.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
