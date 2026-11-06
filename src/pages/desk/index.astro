@@ -25,6 +25,23 @@ const internal: Link[] = [
   { n: 8, name: 'AI 学习路线', url: '/learn/', desc: '12 周 · 可勾选进度', mark: '📚', color: '#7c3aed' },
   { n: 9, name: '文章归档', url: '/', desc: '奥尔特云全部文章', mark: '✎', color: '#0f766e' },
 ];
+
+type FinLink = {
+  name: string;
+  url: string;
+  desc: string;
+  mark: string;
+  color: string;
+};
+
+const finance: FinLink[] = [
+  { name: 'Koyfin', url: 'https://www.koyfin.com/', desc: '平民版彭博终端 · 基本面+宏观一屏', mark: 'K', color: '#1e3a8a' },
+  { name: 'Finviz', url: 'https://finviz.com/', desc: '美股筛选 · 热力图看板', mark: 'F', color: '#15803d' },
+  { name: 'TradingView', url: 'https://www.tradingview.com/', desc: '全球最强图表 · 多市场', mark: '📈', color: '#2962ff' },
+  { name: 'Stock Analysis', url: 'https://stockanalysis.com/', desc: '干净的个股财务看板 · 免费', mark: 'S', color: '#0f766e' },
+  { name: '雪球', url: 'https://xueqiu.com/', desc: '中文社区 · A股 / 港美股行情', mark: '雪', color: '#2d6ae3' },
+  { name: '富途牛牛', url: 'https://www.futunn.com/', desc: '中文综合行情 · 港美股', mark: '牛', color: '#e8590c' },
+];
 ---
 
 <BaseLayout title="工作台" description="每日启动页：常用站点一站直达" noindex={true}>
@@ -68,6 +85,22 @@ const internal: Link[] = [
         </a>
       ))}
     </div>
+  </section>
+
+  <section class="group">
+    <h2>金融看板<span class="count">{finance.length}</span></h2>
+    <div class="grid">
+      {finance.map((l) => (
+        <a href={l.url} target="_blank" rel="noopener noreferrer" class="card">
+          <span class="mark" style={`color:${l.color}`}>{l.mark}</span>
+          <span class="meta">
+            <strong>{l.name}</strong>
+            <em>{l.desc}</em>
+          </span>
+        </a>
+      ))}
+    </div>
+    <p class="note">外部站点，点卡片新标签打开。各站登录态独立，故不做站内嵌入。</p>
   </section>
 
   <section class="group">
