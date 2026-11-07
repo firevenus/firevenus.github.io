@@ -189,6 +189,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     status.classList.toggle('error', isError);
   }
 
+  const API_BASES = ['/api/quotes', 'https://enki-yan.pages.dev/api/quotes'];
+
   async function refresh() {
     if (!tickers.length) {
       render([], false);
@@ -196,45 +198,48 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       return;
     }
     showStatus('刷新中…', false);
-    try {
-      const res = await fetch('/api/quotes?s=' + encodeURIComponent(tickers.join(',')));
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const data = await res.json();
-      render(data.quotes || [], false);
-      showStatus('', false);
-    } catch {
-      // /api 仅在 Cloudflare 域名可用；GitHub Pages 上回退：加密货币走 Binance 直连
-      const crypto = tickers.filter((t) => /^[A-Z0-9]+USDT$/.test(t.toUpperCase()));
-      if (crypto.length) {
-        try {
-          const results = await Promise.allSettled(
-            crypto.map((c) =>
-              fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=' + c.toUpperCase()).then((r) => r.json())
-            )
-          );
-          const quotes = results.map((r, i) => {
-            if (r.status !== 'fulfilled') return { symbol: crypto[i], error: true };
-            const v = r.value;
-            return {
-              symbol: crypto[i],
-              name: crypto[i],
-              currency: 'USD',
-              exchange: 'Binance',
-              price: parseFloat(v.lastPrice),
-              previousClose: parseFloat(v.prevClosePrice),
-              change: parseFloat(v.priceChange),
-              marketTime: Date.now(),
-              spark: [],
-            };
-          });
-          render(quotes, true);
-          showStatus('当前域名无代理接口，仅加密货币可用——完整数据请访问 https://enki-yan.pages.dev/market/', true);
-          return;
-        } catch {}
-      }
-      render([], true);
-      showStatus('数据获取失败，请稍后重试或访问 https://enki-yan.pages.dev/market/', true);
+    const qs = '?s=' + encodeURIComponent(tickers.join(','));
+    for (const base of API_BASES) {
+      try {
+        const res = await fetch(base + qs);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        render(data.quotes || [], false);
+        showStatus('', false);
+        return;
+      } catch {}
     }
+    // 两级 API 都不可达：加密货币走 Binance 直连兜底
+    const crypto = tickers.filter((t) => /^[A-Z0-9]+USDT$/.test(t.toUpperCase()));
+    if (crypto.length) {
+      try {
+        const results = await Promise.allSettled(
+          crypto.map((c) =>
+            fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=' + c.toUpperCase()).then((r) => r.json())
+          )
+        );
+        const quotes = results.map((r, i) => {
+          if (r.status !== 'fulfilled') return { symbol: crypto[i], error: true };
+          const v = r.value;
+          return {
+            symbol: crypto[i],
+            name: crypto[i],
+            currency: 'USD',
+            exchange: 'Binance',
+            price: parseFloat(v.lastPrice),
+            previousClose: parseFloat(v.prevClosePrice),
+            change: parseFloat(v.priceChange),
+            marketTime: Date.now(),
+            spark: [],
+          };
+        });
+        render(quotes, true);
+        showStatus('已用 Binance 兜底显示加密货币；指数/黄金数据不可达，请检查网络或访问 https://enki-yan.pages.dev/market/', true);
+        return;
+      } catch {}
+    }
+    render([], true);
+    showStatus('数据获取失败，请检查网络后重试', true);
   }
 
   form.addEventListener('submit', (e) => {
