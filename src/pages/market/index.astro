@@ -41,10 +41,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
-  const DEFAULT_TICKERS = ['^GSPC', '^IXIC', '^DJI', 'GC=F', 'BTC-USD'];
+  const DEFAULT_TICKERS = ['^GSPC', '^IXIC', '^DJI', 'GC=F', 'BTC-USD', '000001.SS'];
   const PRESETS: Array<{ s: string; label: string }> = [
     { s: '^NDX', label: '纳指100' },
     { s: 'GC=F', label: '黄金' },
+    { s: '000001.SS', label: '上证指数' },
     { s: 'SI=F', label: '白银' },
     { s: 'CL=F', label: '原油' },
     { s: 'BTC-USD', label: '比特币' },
@@ -80,7 +81,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     if (q?.price == null) return '—';
     const n = q.price;
     const digits = n >= 1000 ? 2 : n >= 1 ? 2 : 6;
-    const cur = q.currency === 'USD' ? '$' : q.currency ? q.currency + ' ' : '';
+    const symMap: Record<string, string> = { USD: '$', CNY: '¥', HKD: 'HK$', JPY: '¥' };
+    const cur = symMap[q.currency] ?? (q.currency ? q.currency + ' ' : '');
     return (
       cur +
       n.toLocaleString('zh-CN', {
