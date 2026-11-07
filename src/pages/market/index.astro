@@ -1,0 +1,451 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="行情看板"
+  description="美股指数、黄金、比特币等自由组合的轻量行情面板，免费数据源实时刷新"
+>
+  <section class="market-head">
+    <h1>行情看板</h1>
+    <p class="sub">
+      免费 Yahoo Finance / Binance 数据 · 60 秒自动刷新 ·
+      资产列表保存在本地浏览器
+    </p>
+  </section>
+
+  <section class="toolbar">
+    <form id="add-form" autocomplete="off">
+      <input
+        id="symbol-input"
+        type="text"
+        placeholder="输入代码添加，如 NVDA、GC=F、BTC-USD"
+        spellcheck="false"
+      />
+      <button type="submit">添加</button>
+    </form>
+    <div class="presets" id="presets"></div>
+  </section>
+
+  <section id="status" class="status" hidden></section>
+  <section id="grid" class="grid"></section>
+
+  <footer class="market-foot">
+    <p>
+      行情为 Yahoo Finance / Binance 免费数据，指数与黄金有 15
+      分钟左右延迟，仅供个人参考，不构成投资建议。数据经
+      <a href="https://enki-yan.pages.dev/market/">enki-yan.pages.dev</a>
+      云函数代理并缓存 60 秒。
+    </p>
+  </footer>
+</BaseLayout>
+
+<script>
+  const DEFAULT_TICKERS = ['^GSPC', '^IXIC', '^DJI', 'GC=F', 'BTC-USD'];
+  const PRESETS: Array<{ s: string; label: string }> = [
+    { s: '^NDX', label: '纳指100' },
+    { s: 'GC=F', label: '黄金' },
+    { s: 'SI=F', label: '白银' },
+    { s: 'CL=F', label: '原油' },
+    { s: 'BTC-USD', label: '比特币' },
+    { s: 'ETH-USD', label: '以太坊' },
+    { s: 'NVDA', label: '英伟达' },
+    { s: 'AAPL', label: '苹果' },
+    { s: 'EURUSD=X', label: '欧元' },
+    { s: 'USDCNH=X', label: '离岸人民币' },
+  ];
+  const LS_KEY = 'market-panel-tickers';
+
+  const grid = document.getElementById('grid') as HTMLElement;
+  const status = document.getElementById('status') as HTMLElement;
+  const form = document.getElementById('add-form') as HTMLFormElement;
+  const input = document.getElementById('symbol-input') as HTMLInputElement;
+  const presetsEl = document.getElementById('presets') as HTMLElement;
+
+  function loadTickers(): string[] {
+    try {
+      const raw = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
+      if (Array.isArray(raw) && raw.length) return raw.slice(0, 30);
+    } catch {}
+    return [...DEFAULT_TICKERS];
+  }
+  function saveTickers(list: string[]) {
+    localStorage.setItem(LS_KEY, JSON.stringify(list));
+  }
+
+  let tickers = loadTickers();
+  let timer: ReturnType<typeof setInterval> | undefined;
+
+  function fmtPrice(q: any): string {
+    if (q?.price == null) return '—';
+    const n = q.price;
+    const digits = n >= 1000 ? 2 : n >= 1 ? 2 : 6;
+    const cur = q.currency === 'USD' ? '$' : q.currency ? q.currency + ' ' : '';
+    return (
+      cur +
+      n.toLocaleString('zh-CN', {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits,
+      })
+    );
+  }
+  function fmtChange(n: number): string {
+    const sign = n >= 0 ? '+' : '';
+    return sign + n.toLocaleString('zh-CN', { maximumFractionDigits: 2 });
+  }
+  function fmtPct(n: number): string {
+    const sign = n >= 0 ? '+' : '';
+    return sign + (n * 100).toFixed(2) + '%';
+  }
+
+  // A股/国内惯例：涨红跌绿
+  const upColor = '#c0392b';
+  const downColor = '#1e8449';
+
+  function sparkSvg(points: number[], color: string): string {
+    if (!points || points.length < 2) return '';
+    const w = 220;
+    const h = 40;
+    const min = Math.min(...points);
+    const max = Math.max(...points);
+    const span = max - min || 1;
+    const step = w / (points.length - 1);
+    const pts = points
+      .map((p, i) => `${(i * step).toFixed(1)},${(h - ((p - min) / span) * (h - 6) - 3).toFixed(1)}`)
+      .join(' ');
+    return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="走势">
+      <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.5"/>
+    </svg>`;
+  }
+
+  function marketState(q: any): { text: string; live: boolean } {
+    if (!q?.marketTime) return { text: '', live: false };
+    const age = Date.now() - q.marketTime;
+    if (age < 20 * 60 * 1000) return { text: '交易中', live: true };
+    const d = new Date(q.marketTime);
+    return {
+      text: '休市 · 更新于 ' + d.toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
+      live: false,
+    };
+  }
+
+  function render(quotes: any[], failed: boolean) {
+    const bySymbol = new Map(quotes.map((q) => [q.symbol, q]));
+    grid.innerHTML = '';
+    tickers.forEach((sym) => {
+      const q = bySymbol.get(sym);
+      const card = document.createElement('div');
+      card.className = 'card';
+      if (!q || q.error || q.price == null) {
+        card.classList.add('invalid');
+        card.innerHTML = `
+          <div class="card-top"><span class="sym">${escapeHtml(sym)}</span>
+          <button class="rm" data-sym="${escapeAttr(sym)}" title="移除">×</button></div>
+          <div class="price">—</div>
+          <div class="invalid-note">${failed ? '数据获取失败' : '无效代码'}</div>`;
+      } else {
+        const chg = q.change ?? 0;
+        const pct = q.previousClose ? chg / q.previousClose : 0;
+        const color = chg >= 0 ? upColor : downColor;
+        const st = marketState(q);
+        card.innerHTML = `
+          <div class="card-top">
+            <span class="name" title="${escapeAttr(q.symbol)}">${escapeHtml(q.name)}</span>
+            <button class="rm" data-sym="${escapeAttr(sym)}" title="移除">×</button>
+          </div>
+          <div class="price">${fmtPrice(q)}</div>
+          <div class="chg" style="color:${color}">
+            ${fmtChange(chg)}（${fmtPct(pct)}）
+          </div>
+          ${sparkSvg(q.spark, color)}
+          <div class="meta">
+            <span class="state ${st.live ? 'live' : ''}">${escapeHtml(st.text)}</span>
+            <span class="exch">${escapeHtml(q.exchange)}</span>
+          </div>`;
+      }
+      grid.appendChild(card);
+    });
+    grid.querySelectorAll('.rm').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        tickers = tickers.filter((t) => t !== (btn as HTMLElement).dataset.sym);
+        saveTickers(tickers);
+        refresh();
+      })
+    );
+  }
+
+  function escapeHtml(s: string): string {
+    return s.replace(/[&<>"']/g, (c) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] || c
+    );
+  }
+  function escapeAttr(s: string): string {
+    return escapeHtml(s).replace(/`/g, '&#96;');
+  }
+
+  function showStatus(msg: string, isError: boolean) {
+    status.hidden = !msg;
+    status.textContent = msg;
+    status.classList.toggle('error', isError);
+  }
+
+  async function refresh() {
+    if (!tickers.length) {
+      render([], false);
+      showStatus('列表为空，添加一个资产吧', false);
+      return;
+    }
+    showStatus('刷新中…', false);
+    try {
+      const res = await fetch('/api/quotes?s=' + encodeURIComponent(tickers.join(',')));
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      render(data.quotes || [], false);
+      showStatus('', false);
+    } catch {
+      // /api 仅在 Cloudflare 域名可用；GitHub Pages 上回退：加密货币走 Binance 直连
+      const crypto = tickers.filter((t) => /^[A-Z0-9]+USDT$/.test(t.toUpperCase()));
+      if (crypto.length) {
+        try {
+          const results = await Promise.allSettled(
+            crypto.map((c) =>
+              fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=' + c.toUpperCase()).then((r) => r.json())
+            )
+          );
+          const quotes = results.map((r, i) => {
+            if (r.status !== 'fulfilled') return { symbol: crypto[i], error: true };
+            const v = r.value;
+            return {
+              symbol: crypto[i],
+              name: crypto[i],
+              currency: 'USD',
+              exchange: 'Binance',
+              price: parseFloat(v.lastPrice),
+              previousClose: parseFloat(v.prevClosePrice),
+              change: parseFloat(v.priceChange),
+              marketTime: Date.now(),
+              spark: [],
+            };
+          });
+          render(quotes, true);
+          showStatus('当前域名无代理接口，仅加密货币可用——完整数据请访问 https://enki-yan.pages.dev/market/', true);
+          return;
+        } catch {}
+      }
+      render([], true);
+      showStatus('数据获取失败，请稍后重试或访问 https://enki-yan.pages.dev/market/', true);
+    }
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const sym = input.value.trim().toUpperCase();
+    if (!sym) return;
+    if (tickers.includes(sym)) {
+      showStatus('该资产已在列表中', false);
+      return;
+    }
+    if (tickers.length >= 30) {
+      showStatus('最多 30 个资产', true);
+      return;
+    }
+    tickers.push(sym);
+    saveTickers(tickers);
+    input.value = '';
+    refresh();
+  });
+
+  PRESETS.forEach((p) => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'chip';
+    chip.textContent = p.label;
+    chip.title = p.s;
+    chip.addEventListener('click', () => {
+      input.value = p.s;
+      form.requestSubmit();
+    });
+    presetsEl.appendChild(chip);
+  });
+
+  refresh();
+  timer = setInterval(refresh, 60_000);
+</script>
+
+<style>
+  .market-head {
+    margin-top: 28px;
+  }
+  .market-head h1 {
+    font-size: 1.7em;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .market-head .sub {
+    color: #6b7280;
+    font-size: 0.9em;
+    margin: 6px 0 0;
+  }
+  .toolbar {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  #add-form {
+    display: flex;
+    gap: 8px;
+  }
+  #symbol-input {
+    flex: 1;
+    max-width: 380px;
+    padding: 9px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 0.92em;
+    outline: none;
+  }
+  #symbol-input:focus {
+    border-color: #2563eb;
+  }
+  #add-form button {
+    padding: 9px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #2563eb;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  #add-form button:hover {
+    background: #1d4ed8;
+  }
+  .presets {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    padding: 4px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 999px;
+    background: #f9fafb;
+    color: #374151;
+    font-size: 0.8em;
+    cursor: pointer;
+  }
+  .chip:hover {
+    border-color: #2563eb;
+    color: #2563eb;
+  }
+  .status {
+    margin-top: 16px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 0.85em;
+  }
+  .status.error {
+    background: #fef2f2;
+    color: #b91c1c;
+  }
+  .grid {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 14px;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 16px 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+  .card.invalid {
+    opacity: 0.65;
+  }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-top .name {
+    font-weight: 600;
+    font-size: 0.95em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .card-top .sym {
+    font-weight: 600;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.9em;
+  }
+  .rm {
+    border: none;
+    background: transparent;
+    color: #9ca3af;
+    font-size: 1.2em;
+    line-height: 1;
+    cursor: pointer;
+    padding: 2px 6px;
+  }
+  .rm:hover {
+    color: #dc2626;
+  }
+  .price {
+    font-size: 1.45em;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .chg {
+    font-size: 0.9em;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .spark {
+    width: 100%;
+    height: 40px;
+    margin-top: 2px;
+  }
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72em;
+    color: #9ca3af;
+    gap: 8px;
+  }
+  .state.live {
+    color: #16a34a;
+    font-weight: 600;
+  }
+  .state.live::before {
+    content: '● ';
+  }
+  .invalid-note {
+    color: #9ca3af;
+    font-size: 0.8em;
+  }
+  .market-foot {
+    margin-top: 26px;
+    color: #9ca3af;
+    font-size: 0.78em;
+    line-height: 1.6;
+  }
+  @media (max-width: 640px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    #symbol-input {
+      max-width: none;
+    }
+  }
+</style>

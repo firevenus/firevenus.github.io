@@ -20,10 +20,11 @@ const external: Link[] = [
 ];
 
 const internal: Link[] = [
-  { n: 6, name: '晨间信息流', url: '/morning/', desc: '每日 07:00 自动更新', mark: '☕', color: '#b45309' },
-  { n: 7, name: '权重实验室', url: '/juyi-weight-lab/', desc: '7 维度 · 100 城排名', mark: '🔬', color: '#2563eb' },
-  { n: 8, name: 'AI 学习路线', url: '/learn/', desc: '12 周 · 可勾选进度', mark: '📚', color: '#7c3aed' },
-  { n: 9, name: '文章归档', url: '/', desc: '奥尔特云全部文章', mark: '✎', color: '#0f766e' },
+  { n: 6, name: '行情看板', url: '/market/', desc: '指数 · 黄金 · BTC 自选面板', mark: '📈', color: '#c0392b' },
+  { n: 7, name: '晨间信息流', url: '/morning/', desc: '每日 07:00 自动更新', mark: '☕', color: '#b45309' },
+  { n: 8, name: '权重实验室', url: '/juyi-weight-lab/', desc: '7 维度 · 100 城排名', mark: '🔬', color: '#2563eb' },
+  { n: 9, name: 'AI 学习路线', url: '/learn/', desc: '12 周 · 可勾选进度', mark: '📚', color: '#7c3aed' },
+  { n: 0, name: '文章归档', url: '/', desc: '奥尔特云全部文章', mark: '✎', color: '#0f766e' },
 ];
 
 type FinLink = {
@@ -72,16 +73,16 @@ const finance: FinLink[] = [
   </section>
 
   <section class="group">
-    <h2>站内入口<span class="count">4</span></h2>
+    <h2>站内入口<span class="count">5</span></h2>
     <div class="grid">
       {internal.map((l) => (
-        <a href={l.url} class="card" data-key={l.n}>
+        <a href={l.url} class="card" data-key={l.n || undefined}>
           <span class="mark" style={`color:${l.color}`}>{l.mark}</span>
           <span class="meta">
             <strong>{l.name}</strong>
             <em>{l.desc}</em>
           </span>
-          <span class="num">{l.n}</span>
+          <span class="num">{l.n || '·'}</span>
         </a>
       ))}
     </div>
@@ -130,7 +131,7 @@ const finance: FinLink[] = [
     const t = e.target;
     if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return;
     const n = parseInt(e.key, 10);
-    if (!n || n < 1 || n > 9) return;
+    if (isNaN(n) || n < 0 || n > 9) return;
     const card = cards.find((c) => c.dataset.key === String(n));
     if (!card) return;
     e.preventDefault();
